@@ -4,13 +4,14 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Panel from "./components/Panel";
 import Modal from "./components/Modal";
-import PasswordForm from "./components/PasswordForm";
+import LoginPage from "./components/LogInPage";
 import IWSEmployees from "./components/IWSEmployees";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState("owner");
   const [pending, setPending] = useState(null);
   const [page, setPage] = useState("dash");
@@ -57,7 +58,9 @@ export default function App() {
     setRequests((rs) => rs.filter((r) => r.id !== req.id));
     setToast(`Request ${status}`);
   };
-
+  if (!loggedIn) {
+    return <LoginPage onLogin={() => setLoggedIn(true)} />;
+  }
   return (
     <>
       <div ref={headerRef} className="sticky top-0 z-40">
@@ -81,7 +84,7 @@ export default function App() {
           onClose={() => setNavOpen(false)}
           topOffset={headerHeight}
         />
-        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px]">
+        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
