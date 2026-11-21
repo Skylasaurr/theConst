@@ -35,7 +35,7 @@ export default function App() {
     updateHeaderHeight();
 
     return () => observer.disconnect();
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
