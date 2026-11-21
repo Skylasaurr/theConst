@@ -66,6 +66,7 @@ export default function App() {
 
   const user = users.find((u) => u.id === DEMO_USER[role]);
   const items = NAV[role];
+  const roleLabel = ROLES.find(([v]) => v === role)?.[1];
   const title = (items.find(([id]) => id === page) || items[0])[1];
   const decide = (req, status) => {
     setRequests((rs) => rs.filter((r) => r.id !== req.id));
@@ -79,8 +80,7 @@ export default function App() {
       <div ref={headerRef} className="sticky top-0 z-40">
         <div className="hazard" />
         <TopBar
-          role={role}
-          onRole={(r) => r !== role && setPending(r)}
+          roleLabel={roleLabel}
           theme={theme}
           onTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
           navOpen={navOpen}
