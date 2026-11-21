@@ -5,7 +5,7 @@ const VARIANT = {
   ghost: "bg-transparent border-line hover:border-muted",
   green:
     "bg-emerald-900 border-emerald-900 text-white font-bold hover:brightness-80",
-  warning: "bg-bad/15 border-bad text-bad font-semibold hover:brightness-80",
+  warning: "bg-bad border-bad text-white font-semibold hover:brightness-80",
 };
 export default function Button({
   variant = "default",
