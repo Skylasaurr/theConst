@@ -77,7 +77,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
       <div className="h-[300px] overflow-y-auto">
         <table className="w-full border-collapse text-left text-[14px] [&_td]:px-5 [&_td]:py-2 [&_th]:px-5 [&_th]:py-2">
           <thead className="sticky top-0 bg-surface text-muted">
-            <tr className="border-b border-slate-300">
+            <tr className="border-b border-line">
               <th>Date Created</th>
               <th>Category</th>
               <th>Employee Name</th>
@@ -86,7 +86,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
           </thead>
           <tbody>
             {rows.map((e) => (
-              <tr className="border-b border-slate-300" key={e.id}>
+              <tr className="border-b border-line" key={e.id}>
                 <td>{e.date}</td>
                 <td>{e.category}</td>
                 <td>{e.name}</td>
