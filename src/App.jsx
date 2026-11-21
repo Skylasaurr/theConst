@@ -44,15 +44,17 @@ export default function App() {
 
   return (
     <>
-      <div className="hazard" />
-      <TopBar
-        role={role}
-        onRole={(r) => r !== role && setPending(r)}
-        theme={theme}
-        onTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
-        navOpen={navOpen}
-        onNav={() => setNavOpen(!navOpen)}
-      />
+      <div className="sticky top-0 z-10">
+        <div className="hazard" />
+        <TopBar
+          role={role}
+          onRole={(r) => r !== role && setPending(r)}
+          theme={theme}
+          onTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+          navOpen={navOpen}
+          onNav={() => setNavOpen(!navOpen)}
+        />
+      </div>
       <div className="grid min-h-[calc(100vh-60px)] lg:grid-cols-[232px_1fr]">
         <Sidebar
           items={items}
