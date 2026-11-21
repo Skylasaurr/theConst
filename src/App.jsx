@@ -5,8 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Panel from "./components/Panel";
 import Modal from "./components/Modal";
 import PasswordForm from "./components/PasswordForm";
-import TimeClock from "./components/TimeClock";
-import EmployeesAccount from "./components/EmployeesAccount";
+import IWSEmployees from "./components/IWSEmployees";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 export default function App() {
@@ -91,10 +90,7 @@ export default function App() {
               onPage={setPage}
             />
           ) : page === "dtr" ? (
-            <>
-              <TimeClock />
-              <EmployeesAccount />
-            </>
+            <IWSEmployees />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">

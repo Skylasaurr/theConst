@@ -125,7 +125,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
         onClose={close}
       >
         <div>
-          <div className="grid gap-3 max-h-[600px] overflow-y-auto px-1">
+          <div className="grid gap-3 max-h-[500px] overflow-y-auto px-1">
             <label className="flex flex-col gap-1">
               Employee Firstname
               <input className={field} placeholder="Enter employee firstname" />
@@ -214,14 +214,72 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
         onClose={close}
       >
         <div className="grid gap-3">
-          <label>
-            Employee name
-            <input className={field} defaultValue="Maria Santos" />
-          </label>
-          <label>
-            Category
-            <input className={field} defaultValue="Cashier" />
-          </label>
+          <div className="grid gap-3 max-h-[500px] overflow-y-auto px-1">
+            <label className="flex flex-col gap-1">
+              Employee Firstname
+              <input className={field} placeholder="Enter employee firstname" />
+            </label>
+            <label className="flex flex-col gap-1">
+              Employee Surname
+              <input className={field} placeholder="Enter employee surname" />
+            </label>
+            <label className="flex flex-col gap-1">
+              Employee Lastname
+              <input className={field} placeholder="Enter employee lastname" />
+            </label>
+            <label className="flex flex-col gap-1">
+              Birthdate
+              <input type="date" className={field} />
+            </label>
+            <label className="flex flex-col gap-1">
+              Contact Number
+              <input
+                className={field}
+                type="tel"
+                placeholder="Enter employee contact number"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              Email Address
+              <input
+                type="email"
+                className={field}
+                placeholder="Enter employee email address"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              Employee Position
+              <select
+                name="StaffCategory"
+                id="StaffCategorySelect"
+                className={field}
+              >
+                <option value="" disabled selected>
+                  Select an option
+                </option>
+                <option value="Cashier">Cashier</option>
+                <option value="Admin">Admin</option>
+                <option value="Staff">Staff</option>
+                <option value="InventoryStaff">Inventory Staff</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1">
+              Date Hired
+              <input type="date" className={field} />
+            </label>
+            <label className="flex flex-col gap-1">
+              Username
+              <input className={field} placeholder="Enter username" />
+            </label>
+            <label className="flex flex-col gap-1 mb-2">
+              Password
+              <input
+                type="password"
+                className={field}
+                placeholder="Enter password"
+              />
+            </label>
+          </div>
           <div className="mt-2 flex justify-end gap-2">
             <Button onClick={close}>Cancel</Button>
             <Button variant="green">Save Changes</Button>
@@ -233,17 +291,18 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
       <Modal
         open={modal === "delete"}
         variant="danger"
-        icon="🗑"
         title="Delete employee?"
         subtitle="This action can't be undone."
         onClose={close}
       >
         <p className="rounded border border-line px-3 py-2 text-left">
-          Maria Santos · Cashier
+          Maria Santos
         </p>
         <div className="mt-4 flex justify-center gap-2">
           <Button onClick={close}>Cancel</Button>
-          <Button variant="warning">Yes, delete</Button>
+          <Button variant="warning" onClick={close}>
+            Yes, delete
+          </Button>
         </div>
       </Modal>
     </Panel>
