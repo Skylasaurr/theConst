@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard'
 import Panel from './components/Panel'
 import Modal from './components/Modal'
 import PasswordForm from './components/PasswordForm'
+import Expenses from './components/Expenses'
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from './data/system'
 
 export default function App() {
@@ -34,14 +35,16 @@ export default function App() {
       <div className="hazard" />
       <TopBar role={role} onRole={(r) => r !== role && setPending(r)} theme={theme} onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} navOpen={navOpen} onNav={() => setNavOpen(!navOpen)} />
       <div className="grid min-h-[calc(100vh-60px)] lg:grid-cols-[232px_1fr]">
-        <Sidebar items={items} page={page} onPage={setPage} badge={role === 'owner' ? requests.length : 0} open={navOpen} onClose={() => setNavOpen(false)} />
-        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px]">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">{title}</h1>
-            <div className="text-xl text-muted">{user.name}, {user.pos}</div>
+       <Sidebar items={items} page={page} onPage={setPage} badge={role === 'owner' ? requests.length : 0} open={navOpen} onClose={() => setNavOpen(false)} />
+       <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px]">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+       <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">{title}</h1>
+       <div className="text-xl text-muted">{user.name}, {user.pos}</div>
           </div>
           {page === 'dash' ? (
             <Dashboard role={role} user={user} requests={requests} onDecide={decide} onPage={setPage} />
+          ) : page === 'exp' ? (
+            <Expenses />
           ) : (
             <Panel title={title}><p className="m-0 text-muted">This page belongs to the full system.</p></Panel>
           )}
