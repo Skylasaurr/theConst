@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard'
 import Panel from './components/Panel'
 import Modal from './components/Modal'
 import PasswordForm from './components/PasswordForm'
+import WeeklyDtr from './components/WeeklyDTR'
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from './data/system'
 
 export default function App() {
@@ -40,11 +41,13 @@ export default function App() {
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">{title}</h1>
             <div className="text-xl text-muted">{user.name}, {user.pos}</div>
           </div>
-          {page === 'dash' ? (
-            <Dashboard role={role} user={user} requests={requests} onDecide={decide} onPage={setPage} />
-          ) : (
-            <Panel title={title}><p className="m-0 text-muted">This page belongs to the full system.</p></Panel>
-          )}
+           {page === 'dash' ? (
+           <Dashboard role={role} user={user} requests={requests} onDecide={decide} onPage={setPage} />
+            ) : page === 'dtr' ? (
+           <WeeklyDtr employee={users[0]} onBack={() => setPage('dash')} />
+            ) : (
+           <Panel title={title}><p className="m-0 text-muted">This page belongs to the full system.</p></Panel>
+        )}
         </main>
       </div>
       <Modal open={!!pending} title="Enter password" onClose={() => setPending(null)}>
