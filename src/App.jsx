@@ -6,7 +6,7 @@ import Panel from "./components/Panel";
 import Modal from "./components/Modal";
 import LoginPage from "./components/LogInPage";
 import IWSEmployees from "./components/IWSEmployees";
-import WeeklyDtr from './components/WeeklyDTR'
+import WeeklyDtr from "./components/WeeklyDTR";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 export default function App() {
@@ -104,8 +104,8 @@ export default function App() {
               </div>
             </div>
           </div>
-           {page === "dash" ? (
-           <Dashboard
+          {page === "dash" ? (
+            <Dashboard
               role={role}
               user={user}
               requests={requests}
@@ -114,15 +114,15 @@ export default function App() {
             />
           ) : page === "dtr" ? (
             <IWSEmployees />
-            ) : page === 'dtr' ? (
-           <WeeklyDtr employee={users[0]} onBack={() => setPage('dash')} />
-            ) : (
-           <Panel title={title}>
+          ) : page === "att" ? (
+            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
+          ) : (
+            <Panel title={title}>
               <p className="m-0 text-muted">
                 This page belongs to the full system.
               </p>
             </Panel>
-        )}
+          )}
         </main>
       </div>
       <Modal
