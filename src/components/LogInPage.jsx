@@ -37,7 +37,7 @@ export default function LoginPage({ onLogin, onAttendance }) {
     >
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 w-[350px] max-w-sm bg-surface/90 rounded-lg border border-line p-6 shadow-lg blur-backdrop-lg">
+      <div className="relative z-10 w-[350px] max-w-sm bg-surface/90 rounded-lg border border-line p-6 shadow-lg backdrop-blur-lg">
         <div>
           <h1 className="mb-4 border-b-5 border-amber-600 pb-4 text-center text-5xl font-bold text-emerald-500">
             IMPIG

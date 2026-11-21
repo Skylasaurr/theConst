@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Panel from "./components/Panel";
 import Modal from "./components/Modal";
+import PasswordForm from "./components/PasswordForm";
 import LoginPage from "./components/LogInPage";
 import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
