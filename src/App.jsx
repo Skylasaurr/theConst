@@ -1,80 +1,84 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import TopBar from "./components/TopBar";
-import Sidebar from "./components/Sidebar";
-import Button from "./components/Button";
-import Dashboard from "./components/Dashboard";
-import Panel from "./components/Panel";
-import Modal from "./components/Modal";
-import PasswordForm from "./components/PasswordForm";
-import LoginPage from "./components/LogInPage";
-import IWSEmployees from "./components/IWSEmployees";
-import WeeklyDtr from "./components/WeeklyDTR";
-import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import TopBar from './components/TopBar'
+import Sidebar from './components/Sidebar'
+import Button from './components/Button'
+import Dashboard from './components/Dashboard'
+import Panel from './components/Panel'
+import Modal from './components/Modal'
+import PasswordForm from './components/PasswordForm'
+import LoginPage from './components/LogInPage'
+import IWSEmployees from './components/IWSEmployees'
+import WeeklyDtr from './components/WeeklyDTR'
+import Expenses from './components/Expenses'
+import { NAV, ROLES, DEMO_USER, users, initialRequests } from './data/system'
 
 export default function App() {
-  const headerRef = useRef(null);
-  const [headerHeight, setHeaderHeight] = useState(0);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [role, setRole] = useState("owner");
-  const [pending, setPending] = useState(null);
-  const [page, setPage] = useState("dash");
-  const [navOpen, setNavOpen] = useState(false);
-  const [requests, setRequests] = useState(initialRequests);
-  const [toast, setToast] = useState("");
-  const [confirmLogout, setConfirmLogout] = useState(false);
+  const headerRef = useRef(null)
+  const [headerHeight, setHeaderHeight] = useState(0)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [role, setRole] = useState('owner')
+  const [pending, setPending] = useState(null)
+  const [page, setPage] = useState('dash')
+  const [navOpen, setNavOpen] = useState(false)
+  const [requests, setRequests] = useState(initialRequests)
+  const [toast, setToast] = useState('')
+  const [confirmLogout, setConfirmLogout] = useState(false)
   const [theme, setTheme] = useState(() =>
-    matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-  );
+    matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  )
 
   useLayoutEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
+    const header = headerRef.current
+    if (!header) return
 
-    const updateHeaderHeight = () => {
-      setHeaderHeight(header.getBoundingClientRect().height);
-    };
-    const observer = new ResizeObserver(updateHeaderHeight);
-    observer.observe(header);
-    updateHeaderHeight();
+    const update = () => setHeaderHeight(header.getBoundingClientRect().height)
+    const observer = new ResizeObserver(update)
+    observer.observe(header)
+    update()
 
-    return () => observer.disconnect();
-  }, [loggedIn]);
+    return () => observer.disconnect()
+  }, [loggedIn])
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
+    document.documentElement.dataset.theme = theme
+  }, [theme])
+
   useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(""), 2600);
-    return () => clearTimeout(t);
-  }, [toast]);
+    if (!toast) return
+    const t = setTimeout(() => setToast(''), 2600)
+    return () => clearTimeout(t)
+  }, [toast])
 
   const changeRole = (r) => {
-    setRole(r);
-    setPage("dash");
-    setPending(null);
-  };
+    setRole(r)
+    setPage('dash')
+    setPending(null)
+  }
 
-  const goTo = (id) => (id === "out" ? setConfirmLogout(true) : setPage(id));
+  const goTo = (id) =>
+    id === 'out' ? setConfirmLogout(true) : setPage(id)
 
   const logout = () => {
-    setConfirmLogout(false);
-    setRole("owner");
-    setPage("dash");
-    setLoggedIn(false);
-  };
-
-  const user = users.find((u) => u.id === DEMO_USER[role]);
-  const items = NAV[role];
-  const roleLabel = ROLES.find(([v]) => v === role)?.[1];
-  const title = (items.find(([id]) => id === page) || items[0])[1];
-  const decide = (req, status) => {
-    setRequests((rs) => rs.filter((r) => r.id !== req.id));
-    setToast(`Request ${status}`);
-  };
-  if (!loggedIn) {
-    return <LoginPage onLogin={() => setLoggedIn(true)} />;
+    setConfirmLogout(false)
+    setRole('owner')
+    setPage('dash')
+    setLoggedIn(false)
   }
+
+  const user = users.find((u) => u.id === DEMO_USER[role])
+  const items = NAV[role]
+  const roleLabel = ROLES.find(([v]) => v === role)?.[1]
+  const title = (items.find(([id]) => id === page) || items[0])[1]
+
+  const decide = (req, status) => {
+    setRequests((rs) => rs.filter((r) => r.id !== req.id))
+    setToast(`Request ${status}`)
+  }
+
+  if (!loggedIn) {
+    return <LoginPage onLogin={() => setLoggedIn(true)} />
+  }
+
   return (
     <>
       <div ref={headerRef} className="sticky top-0 z-40">
@@ -82,41 +86,45 @@ export default function App() {
         <TopBar
           roleLabel={roleLabel}
           theme={theme}
-          onTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           navOpen={navOpen}
           onNav={() => setNavOpen(!navOpen)}
         />
       </div>
+
       <div className="grid min-h-[calc(100vh-60px)] lg:grid-cols-[232px_1fr]">
         <Sidebar
           items={items}
           page={page}
           onPage={goTo}
-          badge={role === "owner" ? requests.length : 0}
+          badge={role === 'owner' ? requests.length : 0}
           open={navOpen}
           onClose={() => setNavOpen(false)}
           topOffset={headerHeight}
         />
+
         <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
             </h1>
+
             <div className="text-right">
               <div className="text-xl text-muted">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
-                {new Date().toLocaleDateString("en-PH", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                {new Date().toLocaleDateString('en-PH', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </div>
             </div>
           </div>
-          {page === "dash" ? (
+
+          {page === 'dash' ? (
             <Dashboard
               role={role}
               user={user}
@@ -124,10 +132,12 @@ export default function App() {
               onDecide={decide}
               onPage={setPage}
             />
-          ) : page === "dtr" ? (
+          ) : page === 'exp' ? (
+            <Expenses />
+          ) : page === 'dtr' ? (
             <IWSEmployees />
-          ) : page === "att" ? (
-            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
+          ) : page === 'att' ? (
+            <WeeklyDtr employee={users[0]} onBack={() => setPage('dash')} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">
@@ -137,6 +147,7 @@ export default function App() {
           )}
         </main>
       </div>
+
       <Modal
         open={!!pending}
         title="Enter password"
@@ -157,7 +168,9 @@ export default function App() {
         title="Log out?"
         onClose={() => setConfirmLogout(false)}
       >
-        <p className="m-0 mb-4 text-muted">Are you sure you want to log out?</p>
+        <p className="m-0 mb-4 text-muted">
+          Are you sure you want to log out?
+        </p>
         <div className="flex justify-end gap-2">
           <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
           <Button variant="warning" onClick={logout}>
@@ -165,13 +178,14 @@ export default function App() {
           </Button>
         </div>
       </Modal>
+
       <div
         role="status"
         aria-live="polite"
-        className={`fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-md bg-ink px-4 py-2.5 text-surface transition-opacity ${toast ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-md bg-ink px-4 py-2.5 text-surface transition-opacity ${toast ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
       >
         {toast}
       </div>
     </>
-  );
+  )
 }
