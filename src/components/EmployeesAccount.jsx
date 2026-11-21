@@ -48,7 +48,11 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
     <Panel>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="m-0 font-display text-[22px] font-bold">Employees</h2>
-        <Button variant="green" onClick={() => setModal("add")}>
+        <Button
+          variant="green"
+          className="rounded-lg"
+          onClick={() => setModal("add")}
+        >
           Add Employee
         </Button>
       </div>
