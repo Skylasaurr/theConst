@@ -1,7 +1,7 @@
-
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
+import Button from './components/Button'
 import Dashboard from './components/Dashboard'
 import Panel from './components/Panel'
 import Modal from './components/Modal'
@@ -22,6 +22,7 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false)
   const [requests, setRequests] = useState(initialRequests)
   const [toast, setToast] = useState('')
+  const [confirmLogout, setConfirmLogout] = useState(false)
   const [theme, setTheme] = useState(() =>
     matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   )
@@ -30,13 +31,10 @@ export default function App() {
     const header = headerRef.current
     if (!header) return
 
-    const updateHeaderHeight = () => {
-      setHeaderHeight(header.getBoundingClientRect().height)
-    }
-
-    const observer = new ResizeObserver(updateHeaderHeight)
+    const update = () => setHeaderHeight(header.getBoundingClientRect().height)
+    const observer = new ResizeObserver(update)
     observer.observe(header)
-    updateHeaderHeight()
+    update()
 
     return () => observer.disconnect()
   }, [loggedIn])
@@ -57,8 +55,19 @@ export default function App() {
     setPending(null)
   }
 
+  const goTo = (id) =>
+    id === 'out' ? setConfirmLogout(true) : setPage(id)
+
+  const logout = () => {
+    setConfirmLogout(false)
+    setRole('owner')
+    setPage('dash')
+    setLoggedIn(false)
+  }
+
   const user = users.find((u) => u.id === DEMO_USER[role])
   const items = NAV[role]
+  const roleLabel = ROLES.find(([v]) => v === role)?.[1]
   const title = (items.find(([id]) => id === page) || items[0])[1]
 
   const decide = (req, status) => {
@@ -75,8 +84,7 @@ export default function App() {
       <div ref={headerRef} className="sticky top-0 z-40">
         <div className="hazard" />
         <TopBar
-          role={role}
-          onRole={(r) => r !== role && setPending(r)}
+          roleLabel={roleLabel}
           theme={theme}
           onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           navOpen={navOpen}
@@ -88,7 +96,7 @@ export default function App() {
         <Sidebar
           items={items}
           page={page}
-          onPage={setPage}
+          onPage={goTo}
           badge={role === 'owner' ? requests.length : 0}
           open={navOpen}
           onClose={() => setNavOpen(false)}
@@ -153,6 +161,22 @@ export default function App() {
             onCancel={() => setPending(null)}
           />
         )}
+      </Modal>
+
+      <Modal
+        open={confirmLogout}
+        title="Log out?"
+        onClose={() => setConfirmLogout(false)}
+      >
+        <p className="m-0 mb-4 text-muted">
+          Are you sure you want to log out?
+        </p>
+        <div className="flex justify-end gap-2">
+          <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
+          <Button variant="warning" onClick={logout}>
+            Yes, log out
+          </Button>
+        </div>
       </Modal>
 
       <div

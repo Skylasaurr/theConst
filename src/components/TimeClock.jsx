@@ -36,7 +36,7 @@ const STATUS_LABEL = {
 
 export default function TimeClockTable({ records = TIME_RECORDS, onClockOut }) {
   return (
-    <Panel title="Today's Time Clock ">
+    <Panel title="Today's Time Clock">
       <div className="h-[150px] overflow-y-auto">
         <table className="w-full border-collapse text-left text-[14px] [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2">
           <thead className="text-muted">

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Button from './Button'
 import { PASSWORD } from '../data/system'
 
-/* Shared by the sign-in screen and the role-switch dialog. */
+/* Password prompt used by the role-switch dialog in App.jsx. */
 export default function PasswordForm({ roleLabel, submitLabel, onSuccess, onCancel }) {
   const [pw, setPw] = useState('')
   const [show, setShow] = useState(false)

@@ -1,13 +1,4 @@
-import { ROLES } from "../data/system";
-
-export default function TopBar({
-  role,
-  onRole,
-  theme,
-  onTheme,
-  navOpen,
-  onNav,
-}) {
+export default function TopBar({ roleLabel, theme, onTheme, navOpen, onNav }) {
   return (
     <header className="flex flex-wrap items-center gap-x-3.5 gap-y-2.5 border-b border-line bg-surface px-4 py-2.5">
       <button
@@ -19,21 +10,9 @@ export default function TopBar({
       >
         ☰
       </button>
-      <label htmlFor="role" className="font-semibold">
-        Viewing as
-      </label>
-      <select
-        id="role"
-        value={role}
-        onChange={(e) => onRole(e.target.value)}
-        className="min-w-40 rounded border border-line bg-surface px-2.5 py-1.5"
-      >
-        {ROLES.map(([v, l]) => (
-          <option key={v} value={v}>
-            {l}
-          </option>
-        ))}
-      </select>
+
+      <span className="font-semibold">Logged in as {roleLabel}</span>
+
       <button
         onClick={onTheme}
         aria-pressed={theme === "dark"}

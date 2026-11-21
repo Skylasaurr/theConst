@@ -89,7 +89,6 @@ export default function WeeklyDtr({ employee, onBack }) {
   return (
     <>
       <div className="grid items-start gap-4 md:grid-cols-[280px_1fr]">
-        {}
         <Panel title="Generate weekly DTR">
           <label htmlFor="dtr-employee" className={label}>
             Employee
@@ -175,7 +174,6 @@ export default function WeeklyDtr({ employee, onBack }) {
             </Button>
           </div>
         </Panel>
-        {}
         <Panel className="min-w-0">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <h2 className="m-0 font-display text-[22px] font-bold">
@@ -196,7 +194,6 @@ export default function WeeklyDtr({ employee, onBack }) {
               </Button>
             </div>
           </div>
-          {}
           <div className="overflow-x-auto">
             <DtrPaper report={report} />
           </div>
@@ -342,7 +339,7 @@ const pad = (n) => String(n).padStart(2, "0");
 
 function Calendar({ value, onPick, onClose }) {
   const [shown, setShown] = useState(() =>
-    value ? new Date(value + "T00:00:00") : new Date(),
+    value ? fromISO(value) : new Date(),
   );
   const year = shown.getFullYear();
   const month = shown.getMonth();
@@ -362,7 +359,6 @@ function Calendar({ value, onPick, onClose }) {
 
   return (
     <>
-      {}
       <div className="fixed inset-0 z-20" onClick={onClose} />
 
       <div
