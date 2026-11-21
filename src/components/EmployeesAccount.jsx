@@ -118,6 +118,8 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
           </tbody>
         </table>
       </div>
+
+      {/* ADD */}
       <Modal
         open={modal === "add"}
         title="Add employee"
