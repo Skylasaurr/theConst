@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
@@ -9,6 +9,8 @@ import IWSEmployees from "./components/IWSEmployees";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 export default function App() {
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
   const [role, setRole] = useState("owner");
   const [pending, setPending] = useState(null);
   const [page, setPage] = useState("dash");
@@ -18,6 +20,20 @@ export default function App() {
   const [theme, setTheme] = useState(() =>
     matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   );
+
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const updateHeaderHeight = () => {
+      setHeaderHeight(header.getBoundingClientRect().height);
+    };
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(header);
+    updateHeaderHeight();
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -44,7 +60,7 @@ export default function App() {
 
   return (
     <>
-      <div className="sticky top-0 z-10">
+      <div ref={headerRef} className="sticky top-0 z-40">
         <div className="hazard" />
         <TopBar
           role={role}
@@ -63,6 +79,7 @@ export default function App() {
           badge={role === "owner" ? requests.length : 0}
           open={navOpen}
           onClose={() => setNavOpen(false)}
+          topOffset={headerHeight}
         />
         <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px]">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">

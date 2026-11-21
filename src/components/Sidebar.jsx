@@ -1,9 +1,18 @@
-export default function Sidebar({ items, page, onPage, badge, open, onClose }) {
+export default function Sidebar({
+  items,
+  page,
+  onPage,
+  badge,
+  open,
+  onClose,
+  topOffset,
+}) {
   return (
     <>
       {open && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-20 bg-black/50 lg:hidden"
+          style={{ top: topOffset }}
           onClick={onClose}
           aria-hidden="true"
         />
@@ -11,7 +20,11 @@ export default function Sidebar({ items, page, onPage, badge, open, onClose }) {
       <nav
         id="main-nav"
         aria-label="Main"
-        className={`fixed inset-y-0 left-0 z-30 w-60 overflow-y-auto bg-steel p-3 text-steel-ink transition-transform lg:sticky lg:top-[60px] lg:z-auto lg:h-[calc(100vh-60px)] lg:w-auto lg:translate-x-0 lg:self-start ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed bottom-0 left-0 z-30 w-60 overflow-y-auto bg-steel p-3 text-steel-ink transition-transform lg:sticky lg:z-auto lg:w-auto lg:translate-x-0 lg:self-start ${open ? "translate-x-0" : "-translate-x-full"}`}
+        style={{
+          top: topOffset,
+          height: `calc(100vh - ${topOffset}px)`,
+        }}
       >
         <div className="mb-3 ml-0.5 border-l-4 border-accent px-2.5 pt-1.5 pb-4">
           <b className="block font-display text-[28px] leading-none tracking-wide text-white">
