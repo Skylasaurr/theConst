@@ -12,7 +12,7 @@ export const ROLES = [
   ['owner', 'Administrator'], ['cashier', 'Cashier'], ['inventory', 'Inventory Staff'], ['staff', 'Regular Staff'],
 ]
 export const NAV = {
-  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'Point of Sale'], ['dtr', 'IWS Employees'], ['pay', 'Payroll'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests'], ['users', 'Users & access']],
+  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'Point of Sale'], ['dtr', 'IWS Employees'], ['att', 'Employees Attendance'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests'], ['users', 'Users & access']],
   cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'Point of Sale'], ['dtr', 'My DTR'], ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests']],
   inventory: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['dtr', 'My DTR'], ['rep', 'Inventory report'], ['req', 'My requests']],
   staff: [['dash', 'My dashboard'], ['inv', 'Stock list'], ['dtr', 'My DTR'], ['req', 'My requests']],

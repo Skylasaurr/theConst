@@ -45,7 +45,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
   const field = "rounded border border-line bg-surface px-2.5 py-2";
 
   return (
-    <Panel className="mt-5">
+    <Panel>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="m-0 font-display text-[22px] font-bold">Employees</h2>
         <Button variant="green" onClick={() => setModal("add")}>
