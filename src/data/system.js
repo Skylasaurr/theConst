@@ -1,21 +1,21 @@
 import products from './products.json'
 
 export const users = [
-  { id: 'u1', no: 'E-001', name: 'Patricia Bonto', role: 'owner', pos: 'Owner / Admin', contact: '0917 000 0001', in: '7:45 AM' },
+  { id: 'u1', no: 'E-001', name: 'Patricia Bonto', role: 'owner', pos: 'Administrator', contact: '0917 000 0001', in: '7:45 AM' },
   { id: 'u2', no: 'E-002', name: 'Justine Oriola', role: 'cashier', pos: 'Cashier', contact: '0917 000 0002', in: '7:52 AM' },
   { id: 'u3', no: 'E-003', name: 'Darren Jake Payoran', role: 'inventory', pos: 'Inventory staff', contact: '0917 000 0003', in: '8:03 AM' },
   { id: 'u4', no: 'E-004', name: 'Christian Angelo Basbas', role: 'staff', pos: 'Sales helper', contact: '0917 000 0004', in: null },
   { id: 'u5', no: 'E-005', name: 'Christine Joy San Pablo', role: 'staff', pos: 'Delivery helper', contact: '0917 000 0005', in: '8:10 AM' },
 ]
-export const DEMO_USER = { owner: 'u1', cashier: 'u2', inventory: 'u3', staff: 'u4' }
+export const DEMO_USER = { owner: 'u1', cashier: 'u2', inventory: 'u3'}
 export const ROLES = [
-  ['owner', 'Owner / Admin'], ['cashier', 'Cashier'], ['inventory', 'Inventory Staff'], ['staff', 'Regular Staff'],
+  ['owner', 'Administrator'], ['cashier', 'Cashier'], ['inventory', 'Inventory Staff'],
 ]
 export const NAV = {
-  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'POS & sales'], ['dtr', 'Employees & DTR'], ['pay', 'Payroll'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests'], ['users', 'Users & access']],
-  cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'POS & sales'], ['dtr', 'My DTR'], ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests']],
-  inventory: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['dtr', 'My DTR'], ['rep', 'Inventory report'], ['req', 'My requests']],
-  staff: [['dash', 'My dashboard'], ['inv', 'Stock list'], ['dtr', 'My DTR'], ['req', 'My requests']],
+  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'Point of Sale'], ['dtr', 'IWS Employees'], ['att', 'Employees Attendance'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests']],
+  cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'Point of Sale'],, ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests']],
+  inventory: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['rep', 'Inventory report'], ['req', 'My requests']],
+  staff: [['dash', 'My dashboard'], ['inv', 'Stock list'], ['req', 'My requests']],
 }
 
 export { products }
