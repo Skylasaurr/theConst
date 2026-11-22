@@ -10,6 +10,7 @@ import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
+import ReportsPage from "./pages/ReportsPage";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 
@@ -146,7 +147,9 @@ export default function App() {
             <IWSEmployees />
           ) : page === "inv" ? (
             <Inventory />
-          ) :  page === "att" ? (
+          ) : page === "rep" ? (
+            <ReportsPage key={role} role={role} />
+          ) : page === "att" ? (
             <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
           ) : (
             <Panel title={title}>
