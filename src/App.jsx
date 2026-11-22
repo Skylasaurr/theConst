@@ -7,6 +7,7 @@ import Modal from "./components/Modal";
 import PasswordForm from "./components/PasswordForm";
 import IWSEmployees from "./components/IWSEmployees";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
+import Inventory from "./components/Inventory";
 
 export default function App() {
   const headerRef = useRef(null);
@@ -86,8 +87,8 @@ export default function App() {
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
             </h1>
-            <div className="text-right">
-              <div className="text-xl text-muted">
+            <div className="ml-auto text-right">
+              <div className="text-base text-muted sm:text-xl">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
@@ -110,6 +111,8 @@ export default function App() {
             />
           ) : page === "dtr" ? (
             <IWSEmployees />
+          ) : page === "inv" ? (
+            <Inventory />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">

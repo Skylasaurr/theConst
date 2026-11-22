@@ -13,7 +13,7 @@ export const ROLES = [
 ]
 export const NAV = {
   owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'Point of Sale'], ['dtr', 'IWS Employees'], ['att', 'Employees Attendance'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests']],
-  cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'Point of Sale'],, ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests']],
+  cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'Point of Sale'], ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests']],
   inventory: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['rep', 'Inventory report'], ['req', 'My requests']],
   staff: [['dash', 'My dashboard'], ['inv', 'Stock list'], ['req', 'My requests']],
 }
