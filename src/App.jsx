@@ -74,7 +74,15 @@ export default function App() {
   };
 
   if (!loggedIn) {
-    return <LoginPage onLogin={() => setLoggedIn(true)} />;
+    return (
+      <LoginPage
+        onLogin={(account) => {
+          setRole(account.role);
+          setPage("dash");
+          setLoggedIn(true);
+        }}
+      />
+    );
   }
 
   return (

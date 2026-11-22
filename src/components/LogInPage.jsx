@@ -1,28 +1,33 @@
 import { useState } from "react";
 import Button from "./Button";
-import { PASSWORD } from "../data/system";
+import { DEMO_USER, PASSWORD, users } from "../data/system";
 import bg from "../lib/IWS GMAP.png";
 
 export default function LoginPage({ onLogin, onAttendance }) {
   const [showForm, setShowForm] = useState(false); // false = buttons, true = form
-  const [username, setUsername] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false); // show/hide password text
   const [error, setError] = useState("");
 
   const submit = (e) => {
     e.preventDefault();
-    if (!username.trim() || password !== PASSWORD) {
-      setError("Enter a username or email and the correct password.");
+    const account = users.find(
+      (user) =>
+        user.no.toLowerCase() === employeeId.trim().toLowerCase() &&
+        DEMO_USER[user.role] === user.id,
+    );
+    if (!account || password !== PASSWORD) {
+      setError("Enter a valid employee ID and password.");
       return;
     }
     setError("");
-    onLogin?.({ username: username.trim() });
+    onLogin?.(account);
   };
 
   const cancel = () => {
     setShowForm(false);
-    setUsername("");
+    setEmployeeId("");
     setPassword("");
     setShow(false);
     setError("");
@@ -37,7 +42,7 @@ export default function LoginPage({ onLogin, onAttendance }) {
     >
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 w-[350px] max-w-sm bg-surface/90 rounded-lg border border-line p-6 shadow-lg backdrop-blur-lg">
+      <div className="relative z-10 w-[350px] h-auto flex flex-col justify-evenly max-w-sm bg-surface/90 rounded-lg border border-line p-6 shadow-lg backdrop-blur-lg">
         <div>
           <h1 className="mb-4 border-b-5 border-amber-600 pb-4 text-center text-5xl font-bold text-emerald-500">
             IMPIG
@@ -53,15 +58,15 @@ export default function LoginPage({ onLogin, onAttendance }) {
           <form onSubmit={submit} className="mt-6">
             <div className="grid gap-3">
               <label className="flex flex-col gap-1">
-                Username or email
+                Employee ID
                 <input
                   className={field}
-                  value={username}
+                  value={employeeId}
                   onChange={(e) => {
-                    setUsername(e.target.value);
+                    setEmployeeId(e.target.value);
                     setError("");
                   }}
-                  placeholder="Enter username or email"
+                  placeholder="Enter employee ID (e.g. E-001)"
                   autoComplete="username"
                   autoFocus
                 />
