@@ -117,8 +117,8 @@ export default function App() {
               {title}
             </h1>
 
-            <div className="text-right">
-              <div className="text-xl text-muted">
+            <div className="ml-auto text-right">
+              <div className="text-basedtext-muted sm:text-xl">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
