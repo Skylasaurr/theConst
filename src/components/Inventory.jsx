@@ -12,7 +12,7 @@ const outlineBtn =
 export default function Inventory() {
   const [category, setCategory] = useState("all");
 
-  // stat cards (always count every product)
+
   const low = products.filter((p) => stockStatus(p)[0] === "low").length;
   const out = products.filter((p) => stockStatus(p)[0] === "out").length;
   const value = products.reduce(
