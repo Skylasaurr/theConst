@@ -1,6 +1,6 @@
 import { useState } from "react";
 import StockBadge from "./StockBadge";
-import { peso } from "../lib/format"; // change "format" to your real file name in lib
+import { peso } from "../lib/format"; 
 
 const HEADERS = [
   "Product ID",

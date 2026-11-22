@@ -20,7 +20,7 @@ export default function Sidebar({
       <nav
         id="main-nav"
         aria-label="Main"
-        className={`fixed bottom-0 left-0 z-30 w-60 overflow-y-auto bg-steel p-3 text-steel-ink transition-transform lg:sticky lg:z-auto lg:w-auto lg:translate-x-0 lg:self-start ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed bottom-0 left-0 z-30 w-60 overflow-y-auto bg-steel p-3 text-steel-ink transition-transform lg:z-auto lg:w-[232px] lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
         style={{
           top: topOffset,
           height: `calc(100vh - ${topOffset}px)`,

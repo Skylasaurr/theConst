@@ -25,6 +25,89 @@ const EMPLOYEES = [
   },
 ];
 
+const field = "rounded border border-line bg-surface px-2.5 py-2";
+
+/* Form fields shared by the Add and Update employee modals.
+   mode="add" also shows the "Confirm password" field. */
+function EmployeeFields({ mode }) {
+  const isAdd = mode === "add";
+  return (
+    <div className="grid gap-3 max-h-[500px] overflow-y-auto px-1">
+      <label className="flex flex-col gap-1">
+        Employee Firstname
+        <input className={field} placeholder="Enter employee firstname" />
+      </label>
+      <label className="flex flex-col gap-1">
+        Employee Surname
+        <input className={field} placeholder="Enter employee surname" />
+      </label>
+      <label className="flex flex-col gap-1">
+        Employee Lastname
+        <input className={field} placeholder="Enter employee lastname" />
+      </label>
+      <label className="flex flex-col gap-1">
+        Birthdate
+        <input type="date" className={field} />
+      </label>
+      <label className="flex flex-col gap-1">
+        Contact Number
+        <input
+          className={field}
+          type="tel"
+          placeholder="Enter employee contact number"
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        Email Address
+        <input
+          type="email"
+          className={field}
+          placeholder="Enter employee email address"
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        Employee Position
+        <select
+          name="StaffCategory"
+          id="StaffCategorySelect"
+          defaultValue=""
+          className={field}
+        >
+          <option value="" disabled>
+            Select an option
+          </option>
+          <option value="Cashier">Cashier</option>
+          <option value="Admin">Admin</option>
+          <option value="Staff">Staff</option>
+          <option value="InventoryStaff">Inventory Staff</option>
+        </select>
+      </label>
+      <label className="flex flex-col gap-1">
+        Date Hired
+        <input type="date" className={field} />
+      </label>
+      <label className="flex flex-col gap-1">
+        Username
+        <input className={field} placeholder="Enter username" />
+      </label>
+      <label className={`flex flex-col gap-1${isAdd ? "" : " mb-2"}`}>
+        Password
+        <input type="password" className={field} placeholder="Enter password" />
+      </label>
+      {isAdd && (
+        <label className="flex flex-col gap-1 pb-3">
+          Confirm password
+          <input
+            type="password"
+            className={field}
+            placeholder="Reenter password"
+          />
+        </label>
+      )}
+    </div>
+  );
+}
+
 export default function EmployeesAccount({ employees = EMPLOYEES }) {
   const [modal, setModal] = useState(null); // null | "add" | "edit" | "delete"
   const close = () => setModal(null);
@@ -42,13 +125,15 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
       (e.name + e.category + e.date).toLowerCase().includes(q.toLowerCase()),
   );
 
-  const field = "rounded border border-line bg-surface px-2.5 py-2";
-
   return (
     <Panel>
       <div className="mb-3 flex items-center justify-between">
         <h2 className="m-0 font-display text-[22px] font-bold">Employees</h2>
-        <Button variant="green" onClick={() => setModal("add")}>
+        <Button
+          variant="green"
+          className="rounded-lg"
+          onClick={() => setModal("add")}
+        >
           Add Employee
         </Button>
       </div>
@@ -127,80 +212,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
         onClose={close}
       >
         <div>
-          <div className="grid gap-3 max-h-[500px] overflow-y-auto px-1">
-            <label className="flex flex-col gap-1">
-              Employee Firstname
-              <input className={field} placeholder="Enter employee firstname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Surname
-              <input className={field} placeholder="Enter employee surname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Lastname
-              <input className={field} placeholder="Enter employee lastname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Birthdate
-              <input type="date" className={field} />
-            </label>
-            <label className="flex flex-col gap-1">
-              Contact Number
-              <input
-                className={field}
-                type="tel"
-                placeholder="Enter employee contact number"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              Email Address
-              <input
-                type="email"
-                className={field}
-                placeholder="Enter employee email address"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Position
-              <select
-                name="StaffCategory"
-                id="StaffCategorySelect"
-                className={field}
-              >
-                <option value="" disabled selected>
-                  Select an option
-                </option>
-                <option value="Cashier">Cashier</option>
-                <option value="Admin">Admin</option>
-                <option value="Staff">Staff</option>
-                <option value="InventoryStaff">Inventory Staff</option>
-              </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              Date Hired
-              <input type="date" className={field} />
-            </label>
-            <label className="flex flex-col gap-1">
-              Username
-              <input className={field} placeholder="Enter username" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Password
-              <input
-                type="password"
-                className={field}
-                placeholder="Enter password"
-              />
-            </label>
-            <label className="flex flex-col gap-1 pb-3">
-              Confirm password
-              <input
-                type="password"
-                className={field}
-                placeholder="Reenter password"
-              />
-            </label>
-          </div>
+          <EmployeeFields mode="add" />
           <div className="mt-5 flex justify-end gap-2">
             <Button onClick={close}>Cancel</Button>
             <Button variant="green">Add Employee</Button>
@@ -216,72 +228,7 @@ export default function EmployeesAccount({ employees = EMPLOYEES }) {
         onClose={close}
       >
         <div className="grid gap-3">
-          <div className="grid gap-3 max-h-[500px] overflow-y-auto px-1">
-            <label className="flex flex-col gap-1">
-              Employee Firstname
-              <input className={field} placeholder="Enter employee firstname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Surname
-              <input className={field} placeholder="Enter employee surname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Lastname
-              <input className={field} placeholder="Enter employee lastname" />
-            </label>
-            <label className="flex flex-col gap-1">
-              Birthdate
-              <input type="date" className={field} />
-            </label>
-            <label className="flex flex-col gap-1">
-              Contact Number
-              <input
-                className={field}
-                type="tel"
-                placeholder="Enter employee contact number"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              Email Address
-              <input
-                type="email"
-                className={field}
-                placeholder="Enter employee email address"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              Employee Position
-              <select
-                name="StaffCategory"
-                id="StaffCategorySelect"
-                className={field}
-              >
-                <option value="" disabled selected>
-                  Select an option
-                </option>
-                <option value="Cashier">Cashier</option>
-                <option value="Admin">Admin</option>
-                <option value="Staff">Staff</option>
-                <option value="InventoryStaff">Inventory Staff</option>
-              </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              Date Hired
-              <input type="date" className={field} />
-            </label>
-            <label className="flex flex-col gap-1">
-              Username
-              <input className={field} placeholder="Enter username" />
-            </label>
-            <label className="flex flex-col gap-1 mb-2">
-              Password
-              <input
-                type="password"
-                className={field}
-                placeholder="Enter password"
-              />
-            </label>
-          </div>
+          <EmployeeFields mode="edit" />
           <div className="mt-2 flex justify-end gap-2">
             <Button onClick={close}>Cancel</Button>
             <Button variant="green">Save Changes</Button>

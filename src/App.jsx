@@ -1,23 +1,28 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
+import Button from "./components/Button";
 import Dashboard from "./components/Dashboard";
 import Panel from "./components/Panel";
 import Modal from "./components/Modal";
-import PasswordForm from "./components/PasswordForm";
+import LoginPage from "./components/LogInPage";
 import IWSEmployees from "./components/IWSEmployees";
+import WeeklyDtr from "./components/WeeklyDTR";
+import Expenses from "./components/Expenses";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 import Inventory from "./components/Inventory";
 
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState("owner");
   const [pending, setPending] = useState(null);
   const [page, setPage] = useState("dash");
   const [navOpen, setNavOpen] = useState(false);
   const [requests, setRequests] = useState(initialRequests);
   const [toast, setToast] = useState("");
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const [theme, setTheme] = useState(() =>
     matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   );
@@ -26,19 +31,18 @@ export default function App() {
     const header = headerRef.current;
     if (!header) return;
 
-    const updateHeaderHeight = () => {
-      setHeaderHeight(header.getBoundingClientRect().height);
-    };
-    const observer = new ResizeObserver(updateHeaderHeight);
+    const update = () => setHeaderHeight(header.getBoundingClientRect().height);
+    const observer = new ResizeObserver(update);
     observer.observe(header);
-    updateHeaderHeight();
+    update();
 
     return () => observer.disconnect();
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 2600);
@@ -51,44 +55,69 @@ export default function App() {
     setPending(null);
   };
 
+  const goTo = (id) => (id === "out" ? setConfirmLogout(true) : setPage(id));
+
+  const logout = () => {
+    setConfirmLogout(false);
+    setRole("owner");
+    setPage("dash");
+    setLoggedIn(false);
+  };
+
   const user = users.find((u) => u.id === DEMO_USER[role]);
   const items = NAV[role];
+  const roleLabel = ROLES.find(([v]) => v === role)?.[1];
   const title = (items.find(([id]) => id === page) || items[0])[1];
+
   const decide = (req, status) => {
     setRequests((rs) => rs.filter((r) => r.id !== req.id));
     setToast(`Request ${status}`);
   };
+
+  if (!loggedIn) {
+    return (
+      <LoginPage
+        onLogin={(account) => {
+          setRole(account.role);
+          setPage("dash");
+          setLoggedIn(true);
+        }}
+      />
+    );
+  }
 
   return (
     <>
       <div ref={headerRef} className="sticky top-0 z-40">
         <div className="hazard" />
         <TopBar
-          role={role}
-          onRole={(r) => r !== role && setPending(r)}
+          roleLabel={roleLabel}
           theme={theme}
           onTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
           navOpen={navOpen}
           onNav={() => setNavOpen(!navOpen)}
         />
       </div>
+
       <div className="grid min-h-[calc(100vh-60px)] lg:grid-cols-[232px_1fr]">
         <Sidebar
           items={items}
           page={page}
-          onPage={setPage}
+          onPage={goTo}
           badge={role === "owner" ? requests.length : 0}
           open={navOpen}
           onClose={() => setNavOpen(false)}
           topOffset={headerHeight}
         />
-        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px]">
+
+        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
             </h1>
-            <div className="ml-auto text-right">
-              <div className="text-base text-muted sm:text-xl">
+
+            <div className="text-right">
+              <div className="text-xl text-muted">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
@@ -101,6 +130,7 @@ export default function App() {
               </div>
             </div>
           </div>
+
           {page === "dash" ? (
             <Dashboard
               role={role}
@@ -109,10 +139,12 @@ export default function App() {
               onDecide={decide}
               onPage={setPage}
             />
+          ) : page === "exp" ? (
+            <Expenses />
           ) : page === "dtr" ? (
             <IWSEmployees />
-          ) : page === "inv" ? (
-            <Inventory />
+          ) : page === "att" ? (
+            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">
@@ -122,20 +154,21 @@ export default function App() {
           )}
         </main>
       </div>
+
       <Modal
-        open={!!pending}
-        title="Enter password"
-        onClose={() => setPending(null)}
+        open={confirmLogout}
+        title="Log out?"
+        onClose={() => setConfirmLogout(false)}
       >
-        {pending && (
-          <PasswordForm
-            roleLabel={ROLES.find(([v]) => v === pending)[1]}
-            submitLabel="Switch view"
-            onSuccess={() => changeRole(pending)}
-            onCancel={() => setPending(null)}
-          />
-        )}
+        <p className="m-0 mb-4 text-muted">Are you sure you want to log out?</p>
+        <div className="flex justify-end gap-2">
+          <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
+          <Button variant="warning" onClick={logout}>
+            Yes, log out
+          </Button>
+        </div>
       </Modal>
+
       <div
         role="status"
         aria-live="polite"

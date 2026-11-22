@@ -3,7 +3,7 @@ import EmployeesAccount from "./EmployeesAccount";
 
 export default function IWSEmployees() {
   return (
-    <div className="grid gap-4 lg:grid-row-[1fr_300px]">
+    <div className="grid gap-4">
       <TimeClock />
       <EmployeesAccount />
     </div>
