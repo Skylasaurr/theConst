@@ -23,19 +23,41 @@ export const initialRequests = [
   { id: 'Q-2', by: 'Christine Joy San Pablo', text: 'DTR correction: 07:40 to 17:05', reason: 'Forgot to time in' },
 ]
 
+/* Sample transactions for the last 7 days (seeded, so numbers stay stable between reloads). */
 let seed = 11
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
 const inStock = products.filter((p) => p.stock > 1)
 const today = new Date()
-export const salesByDay = [-6, -5, -4, -3, -2, -1, 0].map((n) => {
-  const d = new Date(today); d.setDate(d.getDate() + n)
+const OFFSETS = [-6, -5, -4, -3, -2, -1, 0]
+const dayDate = (n) => { const d = new Date(today); d.setDate(d.getDate() + n); return d }
+
+export const sales = []
+OFFSETS.forEach((n, day) => {
   const count = n === 0 ? 3 : 3 + Math.floor(rnd() * 3)
-  let total = 0
   for (let i = 0; i < count; i++) {
-    const p = inStock[Math.floor(rnd() * inStock.length)]
-    total += p.price * (1 + Math.floor(rnd() * (p.price < 100 ? 10 : 4)))
+    const items = Array.from({ length: 1 + Math.floor(rnd() * 3) }, () => {
+      const p = inStock[Math.floor(rnd() * inStock.length)]
+      return { name: p.name, unit: p.unit, price: p.price, qty: 1 + Math.floor(rnd() * (p.price < 100 ? 10 : 4)) }
+    })
+    sales.push({
+      id: 'R-' + String(sales.length + 1).padStart(4, '0'), day, date: dayDate(n), items,
+      total: Math.round(items.reduce((t, x) => t + x.qty * x.price, 0)),
+      pay: rnd() < 0.7 ? 'Cash' : 'GCash', by: rnd() < 0.8 ? 'Justine Oriola' : 'Patricia Bonto',
+    })
   }
-  return { label: d.toLocaleDateString('en-PH', { weekday: 'short' }), value: Math.round(total), count }
 })
-export const weekExpenses = 26230
+
+export const salesByDay = OFFSETS.map((n, day) => {
+  const list = sales.filter((s) => s.day === day)
+  return { label: dayDate(n).toLocaleDateString('en-PH', { weekday: 'short' }), value: list.reduce((t, s) => t + s.total, 0), count: list.length }
+})
+
+export const expenses = [
+  [-6, 'Supplier payment', 'Cement restock', 12500], [-5, 'Utilities', 'Electricity bill', 3180],
+  [-4, 'Delivery', 'Fuel for delivery truck', 1450], [-3, 'Supplies', 'Receipt rolls and ink', 420],
+  [-2, 'Salaries', 'Weekly wages', 8400], [-1, 'Meals', 'Staff lunch during inventory', 380],
+  [0, 'Delivery', 'Tricycle fare for hollow blocks', 300],
+].map(([n, cat, note, amt]) => ({ day: 6 + n, date: dayDate(n), cat, note, amt }))
+
+export const weekExpenses = expenses.reduce((t, e) => t + e.amt, 0)
 export const PASSWORD = 'Impig_123'
