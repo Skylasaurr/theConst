@@ -43,7 +43,7 @@ export default function RequestsPanel({ requests, onDecide }) {
               <Button variant="ghost" onClick={() => setOpen(null)}>
                 Close
               </Button>
-              <Button className="!text-bad" onClick={() => decide("rejected")}>
+              <Button variant="warning" onClick={() => decide("rejected")}>
                 Reject
               </Button>
               <Button variant="primary" onClick={() => decide("approved")}>

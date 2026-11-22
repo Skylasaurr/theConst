@@ -12,7 +12,7 @@ export const ROLES = [
   ['owner', 'Administrator'], ['cashier', 'Cashier'], ['inventory', 'Inventory Staff'],
 ]
 export const NAV = {
-  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['pos', 'Point of Sale'], ['dtr', 'IWS Employees'], ['att', 'Employees Attendance'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests'], ['out', 'Logout']],
+  owner: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['dtr', 'IWS Employees'], ['att', 'Employees Attendance'], ['exp', 'Expenses & cash flow'], ['rep', 'Reports'], ['req', 'Requests'], ['out', 'Logout']],
   cashier: [['dash', 'Dashboard'], ['inv', 'Stock'], ['pos', 'Point of Sale'], ['exp', 'Expenses'], ['rep', 'Sales report'], ['req', 'My requests'], ['out', 'Logout']],
   inventory: [['dash', 'Dashboard'], ['inv', 'Inventory'], ['rep', 'Inventory report'], ['req', 'My requests'], ['out', 'Logout']],
 }

@@ -92,11 +92,7 @@ function EmployeeFields({ mode }) {
       </label>
       <label className={`flex flex-col gap-1${isAdd ? "" : " mb-2"}`}>
         Password
-        <input
-          type="password"
-          className={field}
-          placeholder="Enter password"
-        />
+        <input type="password" className={field} placeholder="Enter password" />
       </label>
       {isAdd && (
         <label className="flex flex-col gap-1 pb-3">

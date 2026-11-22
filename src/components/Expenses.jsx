@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 const categories = [
   'Stock purchase', 'Fuel & delivery', 'Utilities',
-  'Sales', 'Repayment', 'Supplies', 'Other'
+  'Sales', 'Repayment', 'Salaries', 'Supplies', 'Other'
 ]
 
 const today = () => {

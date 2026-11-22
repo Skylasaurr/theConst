@@ -26,6 +26,14 @@ const TIME_RECORDS = [
     timeOut: null,
     status: "absent",
   },
+  {
+    id: 3,
+    name: "Ana Reyes",
+    position: "Warehouse Clerk",
+    timeIn: null,
+    timeOut: null,
+    status: "absent",
+  },
 ];
 
 const STATUS_LABEL = {
