@@ -9,7 +9,9 @@ import LoginPage from "./components/LogInPage";
 import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
+import Inventory from "./components/Inventory";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
+
 
 export default function App() {
   const headerRef = useRef(null);
@@ -115,8 +117,8 @@ export default function App() {
               {title}
             </h1>
 
-            <div className="text-right">
-              <div className="text-xl text-muted">
+            <div className="ml-auto text-right">
+              <div className="text-basedtext-muted sm:text-xl">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
@@ -142,7 +144,9 @@ export default function App() {
             <Expenses />
           ) : page === "dtr" ? (
             <IWSEmployees />
-          ) : page === "att" ? (
+          ) : page === "inv" ? (
+            <Inventory />
+          ) :  page === "att" ? (
             <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
           ) : (
             <Panel title={title}>
