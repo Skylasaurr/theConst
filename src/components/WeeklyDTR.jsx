@@ -1,7 +1,6 @@
 import { Component, useState } from "react";
 import Panel from "./Panel";
 import Button from "./Button";
-import { users } from "../data/system";
 
 const fromISO = (s) => new Date(s + "T00:00:00");
 const addDays = (d, n) => {
@@ -46,14 +45,14 @@ const label = "block text-sm font-semibold";
 const hint = "m-0 mt-1 text-[13px] text-muted";
 const off = "disabled:cursor-not-allowed disabled:opacity-50";
 
-export default function WeeklyDtr({ employee, onBack }) {
+export default function WeeklyDtr({ employee, employees, onBack }) {
   const [employeeId, setEmployeeId] = useState(employee?.id ?? "");
   const [weekStart, setWeekStart] = useState("");
   const [calOpen, setCalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
 
-  const person = users.find((u) => u.id === employeeId);
+  const person = employees.find((u) => u.id === employeeId);
   const start = weekStart ? fromISO(weekStart) : null;
   const end = start ? addDays(start, 6) : null;
   const canGenerate = Boolean(person && start);
@@ -100,7 +99,7 @@ export default function WeeklyDtr({ employee, onBack }) {
             className={`${field} bg-surface`}
           >
             <option value="">Select an employee</option>
-            {users.map((u) => (
+            {employees.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>

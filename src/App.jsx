@@ -10,18 +10,20 @@ import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
-import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
-
+import Reports from "./components/Reports";
+import RequestsPage from "./components/RequestsPage";
+import useAdminData from "./hooks/useAdminData";
+import { fullName } from "./lib/format";
+import { NAV, ROLES, DEMO_USER, users } from "./data/system";
 
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [loggedIn, setLoggedIn] = useState(false);
   const [role, setRole] = useState("owner");
-  const [pending, setPending] = useState(null);
   const [page, setPage] = useState("dash");
   const [navOpen, setNavOpen] = useState(false);
-  const [requests, setRequests] = useState(initialRequests);
+  const data = useAdminData();
   const [toast, setToast] = useState("");
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [theme, setTheme] = useState(() =>
@@ -50,12 +52,6 @@ export default function App() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const changeRole = (r) => {
-    setRole(r);
-    setPage("dash");
-    setPending(null);
-  };
-
   const goTo = (id) => (id === "out" ? setConfirmLogout(true) : setPage(id));
 
   const logout = () => {
@@ -71,9 +67,18 @@ export default function App() {
   const title = (items.find(([id]) => id === page) || items[0])[1];
 
   const decide = (req, status) => {
-    setRequests((rs) => rs.filter((r) => r.id !== req.id));
+    data.decideRequest(req.id, status);
     setToast(`Request ${status}`);
   };
+  const roster = data.employees.map((e) => ({
+    id: e.id,
+    no: e.no,
+    name: fullName(e),
+    pos: e.pos,
+  }));
+  const pendingCount = data.requests.filter(
+    (r) => r.status === "pending",
+  ).length;
 
   if (!loggedIn) {
     return (
@@ -105,7 +110,7 @@ export default function App() {
           items={items}
           page={page}
           onPage={goTo}
-          badge={role === "owner" ? requests.length : 0}
+          badge={role === "owner" ? pendingCount : 0}
           open={navOpen}
           onClose={() => setNavOpen(false)}
           topOffset={headerHeight}
@@ -118,7 +123,7 @@ export default function App() {
             </h1>
 
             <div className="ml-auto text-right">
-              <div className="text-basedtext-muted sm:text-xl">
+              <div className="text-base text-muted sm:text-xl">
                 {user.name}, {user.pos}
               </div>
               <div className="text-sm text-muted">
@@ -136,18 +141,30 @@ export default function App() {
             <Dashboard
               role={role}
               user={user}
-              requests={requests}
+              data={data}
               onDecide={decide}
               onPage={setPage}
             />
           ) : page === "exp" ? (
-            <Expenses />
+            <Expenses data={data} notify={setToast} />
           ) : page === "dtr" ? (
-            <IWSEmployees />
+            <IWSEmployees
+              data={data}
+              notify={setToast}
+              currentUserId={user.id}
+            />
           ) : page === "inv" ? (
-            <Inventory />
-          ) :  page === "att" ? (
-            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
+            <Inventory data={data} notify={setToast} />
+          ) : page === "att" ? (
+            <WeeklyDtr
+              employee={roster[0]}
+              employees={roster}
+              onBack={() => setPage("dash")}
+            />
+          ) : page === "rep" && role === "owner" ? (
+            <Reports data={data} notify={setToast} />
+          ) : page === "req" && role === "owner" ? (
+            <RequestsPage data={data} onDecide={decide} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">

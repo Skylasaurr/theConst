@@ -10,12 +10,14 @@ const VARIANT = {
 export default function Button({
   variant = "default",
   small = false,
+  type = "button",
   className = "",
   ...props
 }) {
   return (
     <button
-      className={`inline-flex cursor-pointer items-center gap-1.5 rounded border ${small ? "px-2.5 py-1 text-[13px]" : "px-3.5 py-2"} ${VARIANT[variant]} ${className}`}
+      type={type}
+      className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded border disabled:cursor-not-allowed disabled:opacity-50 ${small ? "px-2.5 py-1 text-[13px]" : "px-3.5 py-2"} ${VARIANT[variant]} ${className}`}
       {...props}
     />
   );

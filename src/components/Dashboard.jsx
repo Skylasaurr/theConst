@@ -4,8 +4,8 @@ import Button from "./Button";
 import SalesChart from "./SalesChart";
 import StockPanel from "./StockPanel";
 import RequestsPanel from "./RequestsPanel";
-import { peso } from "../lib/format";
-import { users, products, salesByDay, weekExpenses } from "../data/system";
+import { peso, withinLastDays } from "../lib/format";
+import { salesByDay } from "../data/system";
 
 const Kpis = ({ children }) => (
   <div className="mb-4 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] overflow-hidden rounded-md border border-line bg-surface">
@@ -18,11 +18,14 @@ const Cols = ({ children }) => (
   </div>
 );
 
-const low = products.filter((p) => p.stock <= p.min).length;
-const out = products.filter((p) => p.stock <= 0).length;
-const clocked = users.filter((u) => u.in).length;
-
-export default function Dashboard({ role, user, requests, onDecide, onPage }) {
+export default function Dashboard({ role, user, data, onDecide, onPage }) {
+  const { products, requests, employees, attendance, transactions } = data;
+  const low = products.filter((p) => p.stock <= p.min).length;
+  const out = products.filter((p) => p.stock <= 0).length;
+  const clocked = employees.filter((e) => attendance[e.id]?.timeIn).length;
+  const weekExpenses = transactions
+    .filter((t) => t.type === "Cash out" && withinLastDays(t.date, 7))
+    .reduce((sum, t) => sum + t.amount, 0);
   const week = salesByDay.reduce((t, d) => t + d.value, 0);
   const today = salesByDay[salesByDay.length - 1];
 
@@ -36,16 +39,23 @@ export default function Dashboard({ role, user, requests, onDecide, onPage }) {
           <KpiCard label="Low or out of stock" value={low} warn />
           <KpiCard
             label="Staff clocked in"
-            value={`${clocked} of ${users.length}`}
+            value={`${clocked} of ${employees.length}`}
           />
         </Kpis>
         <Cols>
-          <Panel title="Sales, last 7 days" className="mb-4">
+          <Panel title="Sales, last 7 days">
             <SalesChart data={salesByDay} />
           </Panel>
-          <RequestsPanel requests={requests} onDecide={onDecide} />
+          <RequestsPanel
+            requests={requests}
+            products={products}
+            onDecide={onDecide}
+            onPage={onPage}
+          />
         </Cols>
-        <StockPanel title="Low-stock alerts" products={products} />
+        <div className="mt-4">
+          <StockPanel title="Low-stock alerts" products={products} />
+        </div>
       </>
     );
   if (role === "cashier")
