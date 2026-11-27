@@ -11,23 +11,14 @@ const LATE_AFTER = 8 * 60 + 15; // after 8:15 AM counts as late
 /* "8:21 AM" -> minutes after midnight */
 const minutes = (label) => {
   const [, h, m, ap] = /^(\d+):(\d+)\s*(AM|PM)$/i.exec(label) ?? [];
-  return (
-    ((Number(h) % 12) + (ap?.toUpperCase() === "PM" ? 12 : 0)) * 60 + Number(m)
-  );
+  return ((Number(h) % 12) + (ap?.toUpperCase() === "PM" ? 12 : 0)) * 60 + Number(m);
 };
-export const statusOf = (rec) =>
-  !rec?.timeIn
-    ? "absent"
-    : minutes(rec.timeIn) > LATE_AFTER
-      ? "late"
-      : "present";
+export const statusOf = (rec) => (!rec?.timeIn ? "absent" : minutes(rec.timeIn) > LATE_AFTER ? "late" : "present");
 
 export default function TimeClockTable({ data, notify }) {
   const { employees, attendance, clockIn, clockOut } = data;
   const [q, setQ] = useState("");
-  const rows = employees.filter((e) =>
-    `${fullName(e)} ${e.pos}`.toLowerCase().includes(q.trim().toLowerCase()),
-  );
+  const rows = employees.filter((e) => `${fullName(e)} ${e.pos}`.toLowerCase().includes(q.trim().toLowerCase()));
 
   return (
     <Panel title="Today's Time Clock">
@@ -56,38 +47,15 @@ export default function TimeClockTable({ data, notify }) {
               const status = statusOf(rec);
               return (
                 <tr key={e.id} className="border-b border-line">
-                  <td>
-                    {fullName(e)} · {e.pos}
-                  </td>
+                  <td>{fullName(e)} · {e.pos}</td>
                   <td>{rec.timeIn || "--"}</td>
                   <td>{rec.timeOut || "--"}</td>
-                  <td>
-                    <StatusBadge variant={status}>
-                      {STATUS_LABEL[status]}
-                    </StatusBadge>
-                  </td>
+                  <td><StatusBadge variant={status}>{STATUS_LABEL[status]}</StatusBadge></td>
                   <td>
                     {!rec.timeIn ? (
-                      <Button
-                        small
-                        variant="primary"
-                        onClick={() => {
-                          clockIn(e.id);
-                          notify(`${fullName(e)} clocked in`);
-                        }}
-                      >
-                        Clock in
-                      </Button>
+                      <Button small variant="primary" onClick={() => { clockIn(e.id); notify(`${fullName(e)} clocked in`); }}>Clock in</Button>
                     ) : !rec.timeOut ? (
-                      <Button
-                        small
-                        onClick={() => {
-                          clockOut(e.id);
-                          notify(`${fullName(e)} clocked out`);
-                        }}
-                      >
-                        Clock out
-                      </Button>
+                      <Button small onClick={() => { clockOut(e.id); notify(`${fullName(e)} clocked out`); }}>Clock out</Button>
                     ) : (
                       <span className="text-muted">Done for today</span>
                     )}
@@ -98,9 +66,7 @@ export default function TimeClockTable({ data, notify }) {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="text-center text-muted">
-                  {employees.length === 0
-                    ? "No time records today."
-                    : "No employees match your search."}
+                  {employees.length === 0 ? "No time records today." : "No employees match your search."}
                 </td>
               </tr>
             )}

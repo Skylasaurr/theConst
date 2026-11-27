@@ -2,28 +2,12 @@ import Modal from "./Modal";
 import Button from "./Button";
 import StatusBadge from "./StatusBadge";
 
-export const STATUS_VARIANT = {
-  pending: "late",
-  approved: "present",
-  rejected: "absent",
-};
-export const STATUS_LABEL = {
-  pending: "Pending",
-  approved: "Approved",
-  rejected: "Rejected",
-};
+export const STATUS_VARIANT = { pending: "late", approved: "present", rejected: "absent" };
+export const STATUS_LABEL = { pending: "Pending", approved: "Approved", rejected: "Rejected" };
 
 /* Review dialog shared by the dashboard panel and the Requests page. */
-export default function RequestReviewModal({
-  request,
-  products,
-  onClose,
-  onDecide,
-}) {
-  const product =
-    request?.type === "stock"
-      ? products.find((p) => p.id === request.payload.productId)
-      : null;
+export default function RequestReviewModal({ request, products, onClose, onDecide }) {
+  const product = request?.type === "stock" ? products.find((p) => p.id === request.payload.productId) : null;
   const decide = (status) => {
     onDecide(request, status);
     onClose();
@@ -38,34 +22,23 @@ export default function RequestReviewModal({
           </p>
           {product && (
             <p className="m-0 mb-2 text-sm">
-              Approving changes {product.name} from <b>{product.stock}</b> to{" "}
-              <b>{request.payload.stock}</b> {product.unit}.
+              Approving changes {product.name} from <b>{product.stock}</b> to <b>{request.payload.stock}</b> {product.unit}.
             </p>
           )}
           {request.type === "dtr" && (
             <p className="m-0 mb-2 text-sm">
-              Approving sets today's time in to <b>{request.payload.timeIn}</b>{" "}
-              and time out to <b>{request.payload.timeOut}</b>.
+              Approving sets today's time in to <b>{request.payload.timeIn}</b> and time out to <b>{request.payload.timeOut}</b>.
             </p>
           )}
           <p className="m-0 mb-4 text-sm">
-            Status:{" "}
-            <StatusBadge variant={STATUS_VARIANT[request.status]}>
-              {STATUS_LABEL[request.status]}
-            </StatusBadge>
+            Status: <StatusBadge variant={STATUS_VARIANT[request.status]}>{STATUS_LABEL[request.status]}</StatusBadge>
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={onClose}>
-              Close
-            </Button>
+            <Button variant="ghost" onClick={onClose}>Close</Button>
             {request.status === "pending" && (
               <>
-                <Button variant="warning" onClick={() => decide("rejected")}>
-                  Reject
-                </Button>
-                <Button variant="primary" onClick={() => decide("approved")}>
-                  Approve
-                </Button>
+                <Button variant="warning" onClick={() => decide("rejected")}>Reject</Button>
+                <Button variant="primary" onClick={() => decide("approved")}>Approve</Button>
               </>
             )}
           </div>

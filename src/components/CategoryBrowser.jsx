@@ -10,9 +10,7 @@ export default function CategoryBrowser({ categories, selected, onSelect }) {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="m-0 text-base font-semibold">Browse by category</h3>
-          <span className="text-xs opacity-70">
-            Find the right supplies faster
-          </span>
+          <span className="text-xs opacity-70">Find the right supplies faster</span>
         </div>
         <div className="flex gap-2">
           {selected !== "all" && (
@@ -55,9 +53,7 @@ export default function CategoryBrowser({ categories, selected, onSelect }) {
           </button>
         ))}
         {categories.length === 0 && (
-          <p className="col-span-full m-0 text-sm opacity-80">
-            No categories yet. Use Manage Categories to add one.
-          </p>
+          <p className="col-span-full m-0 text-sm opacity-80">No categories yet. Use Manage Categories to add one.</p>
         )}
       </div>
     </section>

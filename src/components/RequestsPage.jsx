@@ -2,18 +2,10 @@ import { useState } from "react";
 import Panel from "./Panel";
 import Button from "./Button";
 import StatusBadge from "./StatusBadge";
-import RequestReviewModal, {
-  STATUS_LABEL,
-  STATUS_VARIANT,
-} from "./RequestReviewModal";
+import RequestReviewModal, { STATUS_LABEL, STATUS_VARIANT } from "./RequestReviewModal";
 import { inputClass } from "./Field";
 
-const TABS = [
-  ["pending", "Pending"],
-  ["approved", "Approved"],
-  ["rejected", "Rejected"],
-  ["all", "All"],
-];
+const TABS = [["pending", "Pending"], ["approved", "Approved"], ["rejected", "Rejected"], ["all", "All"]];
 
 export default function RequestsPage({ data, onDecide }) {
   const { requests, products } = data;
@@ -21,47 +13,22 @@ export default function RequestsPage({ data, onDecide }) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(null);
 
-  const count = (key) =>
-    key === "all"
-      ? requests.length
-      : requests.filter((r) => r.status === key).length;
+  const count = (key) => (key === "all" ? requests.length : requests.filter((r) => r.status === key).length);
   const rows = requests.filter(
-    (r) =>
-      (tab === "all" || r.status === tab) &&
-      `${r.id} ${r.text} ${r.by} ${r.reason}`
-        .toLowerCase()
-        .includes(q.trim().toLowerCase()),
+    (r) => (tab === "all" || r.status === tab) && `${r.id} ${r.text} ${r.by} ${r.reason}`.toLowerCase().includes(q.trim().toLowerCase()),
   );
 
   return (
     <Panel>
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div
-          role="tablist"
-          aria-label="Request status"
-          className="flex flex-wrap gap-2"
-        >
+        <div role="tablist" aria-label="Request status" className="flex flex-wrap gap-2">
           {TABS.map(([key, label]) => (
-            <Button
-              key={key}
-              role="tab"
-              aria-selected={tab === key}
-              small
-              variant={tab === key ? "primary" : "default"}
-              onClick={() => setTab(key)}
-            >
+            <Button key={key} role="tab" aria-selected={tab === key} small variant={tab === key ? "primary" : "default"} onClick={() => setTab(key)}>
               {label} ({count(key)})
             </Button>
           ))}
         </div>
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search requests"
-          aria-label="Search requests"
-          className={`${inputClass} ml-auto min-w-0 basis-56`}
-        />
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search requests" aria-label="Search requests" className={`${inputClass} ml-auto min-w-0 basis-56`} />
       </div>
 
       <div className="overflow-x-auto">
@@ -78,22 +45,12 @@ export default function RequestsPage({ data, onDecide }) {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-b border-line">
-                <td>
-                  <span className="text-muted">{r.id}</span> · {r.text}
-                </td>
+                <td><span className="text-muted">{r.id}</span> · {r.text}</td>
                 <td>{r.by}</td>
                 <td>{r.reason}</td>
-                <td>
-                  <StatusBadge variant={STATUS_VARIANT[r.status]}>
-                    {STATUS_LABEL[r.status]}
-                  </StatusBadge>
-                </td>
+                <td><StatusBadge variant={STATUS_VARIANT[r.status]}>{STATUS_LABEL[r.status]}</StatusBadge></td>
                 <td className="text-right">
-                  <Button
-                    small
-                    variant={r.status === "pending" ? "primary" : "default"}
-                    onClick={() => setOpen(r)}
-                  >
+                  <Button small variant={r.status === "pending" ? "primary" : "default"} onClick={() => setOpen(r)}>
                     {r.status === "pending" ? "Review" : "View"}
                   </Button>
                 </td>
@@ -102,9 +59,7 @@ export default function RequestsPage({ data, onDecide }) {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="text-center text-muted">
-                  {tab === "pending" && !q
-                    ? "No pending requests. You are all caught up."
-                    : "No requests match your filter."}
+                  {tab === "pending" && !q ? "No pending requests. You are all caught up." : "No requests match your filter."}
                 </td>
               </tr>
             )}
@@ -112,12 +67,7 @@ export default function RequestsPage({ data, onDecide }) {
         </table>
       </div>
 
-      <RequestReviewModal
-        request={open}
-        products={products}
-        onClose={() => setOpen(null)}
-        onDecide={onDecide}
-      />
+      <RequestReviewModal request={open} products={products} onClose={() => setOpen(null)} onDecide={onDecide} />
     </Panel>
   );
 }

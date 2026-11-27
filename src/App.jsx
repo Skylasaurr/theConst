@@ -10,9 +10,12 @@ import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
-import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
+import Reports from "./components/Reports";
+import RequestsPage from "./components/RequestsPage";
 import useAdminData from "./hooks/useAdminData";
 import { fullName } from "./lib/format";
+import { NAV, ROLES, DEMO_USER, users } from "./data/system";
+
 
 export default function App() {
   const headerRef = useRef(null);
@@ -68,15 +71,8 @@ export default function App() {
     data.decideRequest(req.id, status);
     setToast(`Request ${status}`);
   };
-  const roster = data.employees.map((e) => ({
-    id: e.id,
-    no: e.no,
-    name: fullName(e),
-    pos: e.pos,
-  }));
-  const pendingCount = data.requests.filter(
-    (r) => r.status === "pending",
-  ).length;
+  const roster = data.employees.map((e) => ({ id: e.id, no: e.no, name: fullName(e), pos: e.pos }));
+  const pendingCount = data.requests.filter((r) => r.status === "pending").length;
 
   if (!loggedIn) {
     return (
@@ -146,15 +142,19 @@ export default function App() {
           ) : page === "exp" ? (
             <Expenses data={data} notify={setToast} />
           ) : page === "dtr" ? (
-            <IWSEmployees
-              data={data}
-              notify={setToast}
-              currentUserId={user.id}
-            />
+            <IWSEmployees data={data} notify={setToast} currentUserId={user.id} />
           ) : page === "inv" ? (
-            <Inventory />
+            <Inventory data={data} notify={setToast} />
           ) : page === "att" ? (
-            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
+            <WeeklyDtr
+              employee={roster[0]}
+              employees={roster}
+              onBack={() => setPage("dash")}
+            />
+          ) : page === "rep" && role === "owner" ? (
+            <Reports data={data} notify={setToast} />
+          ) : page === "req" && role === "owner" ? (
+            <RequestsPage data={data} onDecide={decide} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">

@@ -1,27 +1,16 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react'
 
-const SIZE = {
-  sm: "w-[min(400px,calc(100vw-24px))]",
-  md: "w-[min(460px,calc(100vw-24px))]",
-  lg: "w-[min(640px,calc(100vw-24px))]",
-};
+const SIZE = { sm: 'w-[min(400px,calc(100vw-24px))]', md: 'w-[min(460px,calc(100vw-24px))]', lg: 'w-[min(640px,calc(100vw-24px))]' }
 
-export default function Modal({
-  open,
-  title,
-  subtitle,
-  size = "md",
-  onClose,
-  children,
-}) {
-  const ref = useRef(null);
-  const openRef = useRef(open);
-  openRef.current = open;
+export default function Modal({ open, title, subtitle, size = 'md', onClose, children }) {
+  const ref = useRef(null)
+  const openRef = useRef(open)
+  openRef.current = open
   useEffect(() => {
-    const d = ref.current;
-    if (open && !d.open) d.showModal();
-    if (!open && d.open) d.close();
-  }, [open]);
+    const d = ref.current
+    if (open && !d.open) d.showModal()
+    if (!open && d.open) d.close()
+  }, [open])
   return (
     <dialog
       ref={ref}
@@ -33,12 +22,10 @@ export default function Modal({
       {open && (
         <div className="p-5">
           <h2 className="m-0 font-display text-[22px] font-bold">{title}</h2>
-          {subtitle && (
-            <p className="m-0 mt-0.5 text-sm text-muted">{subtitle}</p>
-          )}
+          {subtitle && <p className="m-0 mt-0.5 text-sm text-muted">{subtitle}</p>}
           <div className="mt-3">{children}</div>
         </div>
       )}
     </dialog>
-  );
+  )
 }
