@@ -117,7 +117,7 @@ function TransactionForm({ initial, submitLabel, onSubmit, onCancel }) {
 
 export default function Expenses({ data, notify }) {
   const { transactions } = data;
-  const [dialog, setDialog] = useState(null); // { type: "edit" | "delete", item }
+  const [dialog, setDialog] = useState(null);
   const close = () => setDialog(null);
   const [q, setQ] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");

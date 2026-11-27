@@ -7,6 +7,7 @@ export const users = [
   { id: 'u3', no: 'E-003', name: 'Darren Jake Payoran', role: 'inventory', pos: 'Inventory staff', contact: '0917 000 0003', in: '8:03 AM' },
   { id: 'u4', no: 'E-004', name: 'Christian Angelo Basbas', role: 'staff', pos: 'Sales helper', contact: '0917 000 0004', in: null },
   { id: 'u5', no: 'E-005', name: 'Christine Joy San Pablo', role: 'staff', pos: 'Delivery helper', contact: '0917 000 0005', in: '8:10 AM' },
+  { id: 'u6', no: 'E-006', name: 'Mark Ian Ebora', role: 'staff', pos: 'Delivery helper', contact: '0917 000 0006', in: '8:15 AM' },
 ]
 export const DEMO_USER = { owner: 'u1', cashier: 'u2', inventory: 'u3'}
 export const ROLES = [
@@ -21,10 +22,7 @@ export const NAV = {
 export { products }
 export const PASSWORD = 'Impig_123'
 
-/* ---------- Admin sample data (frontend state only, no database) ---------- */
 
-/* type "stock": payload.stock becomes the new quantity of payload.productId.
-   type "dtr": payload sets the employee's time in / out for today. */
 export const initialRequests = [
   { id: 'Q-1', by: 'Darren Jake Payoran', text: 'Stock count adjustment: PPR PIPE 1 32mm to 152', reason: 'Physical count is higher than the system', type: 'stock', payload: { productId: 'p3', stock: 152 }, status: 'pending', decidedAt: null },
   { id: 'Q-2', by: 'Christine Joy San Pablo', text: 'DTR correction: 07:40 to 17:05', reason: 'Forgot to time in', type: 'dtr', payload: { employeeId: 'u5', timeIn: '7:40 AM', timeOut: '5:05 PM' }, status: 'pending', decidedAt: null },
@@ -40,6 +38,7 @@ export const initialEmployees = [
   emp('u3', 'E-003', 'Darren Jake', '', 'Payoran', 'inventory', 'Inventory staff', '0917 000 0003', 'darren.payoran@impig.example', '2000-11-02', '2024-05-20', 'dpayoran'),
   emp('u4', 'E-004', 'Christian Angelo', '', 'Basbas', 'staff', 'Sales helper', '0917 000 0004', 'christian.basbas@impig.example', '2001-01-30', '2025-03-03', ''),
   emp('u5', 'E-005', 'Christine Joy', '', 'San Pablo', 'staff', 'Delivery helper', '0917 000 0005', 'christine.sanpablo@impig.example', '2000-09-18', '2025-06-16', ''),
+  emp('u6', 'E-006', 'Mark Ian', '', 'Ebora', 'staff', 'CEO', '0917 000 0006', 'mark.ebora@impig.example', '2000-12-25', '2025-07-15', ''),
 ]
 export const initialAttendance = Object.fromEntries(
   users.map((u) => [u.id, { timeIn: u.in, timeOut: null }]),
@@ -65,8 +64,7 @@ export const initialTransactions = [
   tx(16, 27, 'Salaries', 'Bi-monthly payroll', 22000, 'Cash out'),
 ]
 
-/* Sales records for the last 30 days (made by the cashier side; read-only for Admin).
-   Deterministic so the sample numbers stay stable between refreshes. */
+
 let seed = 11
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
 const inStock = products.filter((p) => p.stock > 1)

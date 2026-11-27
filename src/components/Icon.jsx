@@ -1,4 +1,3 @@
-/* Small stroke icons (24x24). `name` picks the path(s). */
 const PATHS = {
   box: "M21 8l-9-5-9 5v8l9 5 9-5V8z M3 8l9 5 9-5 M12 13v8",
   alert:

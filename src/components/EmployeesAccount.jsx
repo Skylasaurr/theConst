@@ -8,7 +8,6 @@ import Icon from "./Icon";
 import { fullName, isoDate } from "../lib/format";
 import { DEMO_USER } from "../data/system";
 
-/* Position (select) -> account role. Regular staff don't need an account. */
 const POSITIONS = [
   ["cashier", "Cashier", "Cashier"],
   ["owner", "Admin", "Administrator"],
