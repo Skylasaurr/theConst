@@ -11,6 +11,8 @@ import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
 import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
+import useAdminData from "./hooks/useAdminData";
+import { fullName } from "./lib/format";
 
 export default function App() {
   const headerRef = useRef(null);
