@@ -110,7 +110,7 @@ export default function App() {
           topOffset={headerHeight}
         />
 
-        <main className="w-full max-w-[1120px] min-w-0 p-4 md:p-[22px] lg:col-start-2">
+       <main className="w-full max-w-none min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
