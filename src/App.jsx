@@ -1,3 +1,4 @@
+
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
@@ -6,6 +7,7 @@ import Dashboard from "./components/Dashboard";
 import Panel from "./components/Panel";
 import Modal from "./components/Modal";
 import LoginPage from "./components/LogInPage";
+import AttendancePage from "./components/AttendancePage";
 import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
@@ -16,11 +18,11 @@ import useAdminData from "./hooks/useAdminData";
 import { fullName } from "./lib/format";
 import { NAV, ROLES, DEMO_USER, users } from "./data/system";
 
-
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [attendanceMode, setAttendanceMode] = useState(false);
   const [role, setRole] = useState("owner");
   const [page, setPage] = useState("dash");
   const [navOpen, setNavOpen] = useState(false);
@@ -71,13 +73,52 @@ export default function App() {
     data.decideRequest(req.id, status);
     setToast(`Request ${status}`);
   };
-  const roster = data.employees.map((e) => ({ id: e.id, no: e.no, name: fullName(e), pos: e.pos }));
-  const pendingCount = data.requests.filter((r) => r.status === "pending").length;
+
+  const roster = data.employees.map((e) => ({
+    id: e.id,
+    no: e.no,
+    name: fullName(e),
+    pos: e.pos,
+  }));
+
+  const pendingCount = data.requests.filter(
+    (r) => r.status === "pending",
+  ).length;
+
+  if (attendanceMode) {
+    return (
+      <>
+        <AttendancePage
+          data={data}
+          notify={setToast}
+          onBack={() => {
+            setAttendanceMode(false);
+            setToast("");
+          }}
+        />
+
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-md bg-ink px-4 py-2.5 text-surface transition-opacity ${
+            toast ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          {toast}
+        </div>
+      </>
+    );
+  }
 
   if (!loggedIn) {
     return (
       <LoginPage
+        onAttendance={() => {
+          setToast("");
+          setAttendanceMode(true);
+        }}
         onLogin={(account) => {
+          setAttendanceMode(false);
           setRole(account.role);
           setPage("dash");
           setLoggedIn(true);
@@ -110,7 +151,7 @@ export default function App() {
           topOffset={headerHeight}
         />
 
-       <main className="w-full max-w-none min-w-0 p-4 md:p-[22px] lg:col-start-2">
+        <main className="w-full max-w-none min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
@@ -142,7 +183,11 @@ export default function App() {
           ) : page === "exp" ? (
             <Expenses data={data} notify={setToast} />
           ) : page === "dtr" ? (
-            <IWSEmployees data={data} notify={setToast} currentUserId={user.id} />
+            <IWSEmployees
+              data={data}
+              notify={setToast}
+              currentUserId={user.id}
+            />
           ) : page === "inv" ? (
             <Inventory data={data} notify={setToast} />
           ) : page === "att" ? (
@@ -170,7 +215,9 @@ export default function App() {
         title="Log out?"
         onClose={() => setConfirmLogout(false)}
       >
-        <p className="m-0 mb-4 text-muted">Are you sure you want to log out?</p>
+        <p className="m-0 mb-4 text-muted">
+          Are you sure you want to log out?
+        </p>
         <div className="flex justify-end gap-2">
           <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
           <Button variant="warning" onClick={logout}>
@@ -182,7 +229,9 @@ export default function App() {
       <div
         role="status"
         aria-live="polite"
-        className={`fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-md bg-ink px-4 py-2.5 text-surface transition-opacity ${toast ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-md bg-ink px-4 py-2.5 text-surface transition-opacity ${
+          toast ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
       >
         {toast}
       </div>
