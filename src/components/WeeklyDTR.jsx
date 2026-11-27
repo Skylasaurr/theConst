@@ -2,6 +2,7 @@ import { Component, useState } from "react";
 import Panel from "./Panel";
 import Button from "./Button";
 import Calendar from "./Calendar";
+import useLoading from "../lib/useLoading";
 import { users } from "../data/system";
 
 const fromISO = (s) => new Date(s + "T00:00:00");
@@ -14,7 +15,6 @@ const LONG = { month: "long", day: "numeric", year: "numeric" };
 const fmt = (d, opts = LONG) => d.toLocaleDateString("en-PH", opts);
 
 const WORK_DAYS = 5;
-const LOADING_MS = 1500;
 
 function getWeekRows(start) {
   return Array.from({ length: WORK_DAYS }, (_, i) => {
@@ -30,7 +30,6 @@ function getWeekRows(start) {
 }
 
 const PAGE_CSS = `
-@keyframes dtr-fill { from { width: 0 } to { width: 100% } }
 @media print {
   html, body { background: #fff !important; }
   body * { visibility: hidden; }
@@ -51,7 +50,7 @@ export default function WeeklyDtr({ employee, onBack }) {
   const [employeeId, setEmployeeId] = useState(employee?.id ?? "");
   const [weekStart, setWeekStart] = useState("");
   const [calOpen, setCalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { run, modal } = useLoading();
   const [report, setReport] = useState(null);
 
   const person = users.find((u) => u.id === employeeId);
@@ -59,16 +58,8 @@ export default function WeeklyDtr({ employee, onBack }) {
   const end = start ? addDays(start, 6) : null;
   const canGenerate = Boolean(person && start);
 
-  const withLoading = (done) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      done();
-    }, LOADING_MS);
-  };
-
   const generate = () =>
-    withLoading(() => {
+    run("Generating weekly DTR...", () => {
       const rows = getWeekRows(start);
       setReport({
         person,
@@ -79,7 +70,7 @@ export default function WeeklyDtr({ employee, onBack }) {
       });
     });
 
-  const print = () => withLoading(() => window.print());
+  const print = () => run("Preparing to print...", () => window.print());
 
   const reset = () => {
     setEmployeeId("");
@@ -201,7 +192,7 @@ export default function WeeklyDtr({ employee, onBack }) {
         </Panel>
       </div>
 
-      {loading && <LoadingModal />}
+      {modal}
       <style>{PAGE_CSS}</style>
     </>
   );
@@ -272,27 +263,6 @@ function DtrPaper({ report }) {
         <div className="w-40 border-t border-[#1B2328] pt-1">
           Authorized signature
         </div>
-      </div>
-    </div>
-  );
-}
-
-function LoadingModal() {
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="fixed inset-0 z-50 grid place-items-center bg-black/55"
-    >
-      <div className="w-72 rounded-md border-2 border-ink bg-surface p-4 font-mono text-ink">
-        <div className="text-2xl font-bold tracking-widest">LOADING...</div>
-        <div className="my-2 h-7 border-2 border-ink p-0.5">
-          <div
-            className="h-full bg-ink"
-            style={{ animation: `dtr-fill ${LOADING_MS}ms steps(5) forwards` }}
-          />
-        </div>
-        <div className="text-center text-sm tracking-widest">PLEASE WAIT</div>
       </div>
     </div>
   );
