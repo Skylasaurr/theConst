@@ -10,11 +10,7 @@ import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
-import Reports from "./components/Reports";
-import RequestsPage from "./components/RequestsPage";
-import useAdminData from "./hooks/useAdminData";
-import { fullName } from "./lib/format";
-import { NAV, ROLES, DEMO_USER, users } from "./data/system";
+import { NAV, ROLES, DEMO_USER, users, initialRequests } from "./data/system";
 
 export default function App() {
   const headerRef = useRef(null);
@@ -154,17 +150,9 @@ export default function App() {
               currentUserId={user.id}
             />
           ) : page === "inv" ? (
-            <Inventory data={data} notify={setToast} />
+            <Inventory />
           ) : page === "att" ? (
-            <WeeklyDtr
-              employee={roster[0]}
-              employees={roster}
-              onBack={() => setPage("dash")}
-            />
-          ) : page === "rep" && role === "owner" ? (
-            <Reports data={data} notify={setToast} />
-          ) : page === "req" && role === "owner" ? (
-            <RequestsPage data={data} onDecide={decide} />
+            <WeeklyDtr employee={users[0]} onBack={() => setPage("dash")} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">

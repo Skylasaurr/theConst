@@ -65,29 +65,79 @@ export const initialTransactions = [
 ]
 
 
+/* Sample transactions for the last 7 days (seeded, so numbers stay stable between reloads). */
 let seed = 11
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647
 const inStock = products.filter((p) => p.stock > 1)
-export const salesRecords = (() => {
-  const out = []
-  for (let n = 29; n >= 0; n--) {
-    const d = new Date()
-    d.setDate(d.getDate() - n)
-    const date = isoDate(d)
-    const count = n === 0 ? 3 : 3 + Math.floor(rnd() * 3)
-    for (let i = 0; i < count; i++) {
-      const items = Array.from({ length: 1 + Math.floor(rnd() * 3) }, () => {
-        const p = inStock[Math.floor(rnd() * inStock.length)]
-        return { productId: p.id, name: p.name, price: p.price, qty: 1 + Math.floor(rnd() * (p.price < 100 ? 10 : 4)) }
-      })
-      out.push({ id: `S-${date}-${i + 1}`, date, items, total: Math.round(items.reduce((t, it) => t + it.price * it.qty, 0)) })
-    }
-  }
-  return out
-})()
-
+const today = new Date()
 export const salesByDay = [-6, -5, -4, -3, -2, -1, 0].map((n) => {
-  const d = new Date(); d.setDate(d.getDate() + n)
-  const sales = salesRecords.filter((s) => s.date === isoDate(d))
-  return { label: d.toLocaleDateString('en-PH', { weekday: 'short' }), value: sales.reduce((t, s) => t + s.total, 0), count: sales.length }
+  const d = new Date(today); d.setDate(d.getDate() + n)
+  const count = n === 0 ? 3 : 3 + Math.floor(rnd() * 3)
+  let total = 0
+  for (let i = 0; i < count; i++) {
+    const p = inStock[Math.floor(rnd() * inStock.length)]
+    total += p.price * (1 + Math.floor(rnd() * (p.price < 100 ? 10 : 4)))
+  }
+  return { label: d.toLocaleDateString('en-PH', { weekday: 'short' }), value: Math.round(total), count }
 })
+
+const reportOffsets = [-6, -5, -4, -3, -2, -1, 0]
+const reportDate = (offset) => {
+  const d = new Date(today)
+  d.setDate(d.getDate() + offset)
+  return d
+}
+
+export const sales = reportOffsets.flatMap((offset, day) => {
+  const count = offset === 0 ? 3 : 3 + Math.floor(rnd() * 3)
+  const date = reportDate(offset)
+  return Array.from({ length: count }, (_, i) => {
+    const items = Array.from({ length: 1 + Math.floor(rnd() * 3) }, () => {
+      const p = inStock[Math.floor(rnd() * inStock.length)]
+      return {
+        name: p.name,
+        unit: p.unit,
+        price: p.price,
+        qty: 1 + Math.floor(rnd() * (p.price < 100 ? 10 : 4)),
+      }
+    })
+    return {
+      id: `R-${String(day * count + i + 1).padStart(4, '0')}`,
+      day,
+      date,
+      items,
+      total: Math.round(items.reduce((t, item) => t + item.qty * item.price, 0)),
+      pay: rnd() < 0.7 ? 'Cash' : 'GCash',
+      by: rnd() < 0.8 ? 'Justine Oriola' : 'Patricia Bonto',
+    }
+  })
+})
+
+export const salesRecords = sales.map((sale) => ({
+  id: sale.id,
+  date: isoDate(sale.date),
+  items: sale.items.map((item) => ({
+    productId: item.name,
+    name: item.name,
+    price: item.price,
+    qty: item.qty,
+  })),
+  total: sale.total,
+}))
+
+export const expenses = [
+  [-6, 'Supplier payment', 'Cement restock', 12500],
+  [-5, 'Utilities', 'Electricity bill', 3180],
+  [-4, 'Delivery', 'Fuel for delivery truck', 1450],
+  [-3, 'Supplies', 'Receipt rolls and ink', 420],
+  [-2, 'Salaries', 'Weekly wages', 8400],
+  [-1, 'Meals', 'Staff lunch during inventory', 380],
+  [0, 'Delivery', 'Tricycle fare for hollow blocks', 300],
+].map(([offset, cat, note, amt]) => ({
+  day: 6 + offset,
+  date: reportDate(offset),
+  cat,
+  note,
+  amt,
+}))
+export const weekExpenses = 26230

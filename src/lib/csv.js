@@ -35,3 +35,7 @@ export function downloadFile(name, text, type = 'text/csv;charset=utf-8') {
   a.remove()
   URL.revokeObjectURL(url)
 }
+
+export function downloadCsv(name, head, rows) {
+  downloadFile(name, toCsv([head, ...rows]))
+}
