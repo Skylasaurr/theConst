@@ -164,8 +164,8 @@ export default function LoginPage({ onLogin, onAttendance, loading }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#edf2ef] p-1 md:p-3">
-      <div className="grid min-h-[calc(100vh-8px)] overflow-hidden rounded-2xl bg-white shadow-xl md:min-h-[calc(100vh-24px)] md:grid-cols-[58%_42%]">
+    <main className="min-h-screen bg-[#edf2ef] p-1 md:h-screen md:overflow-hidden md:p-3">
+      <div className="grid min-h-[calc(100vh-8px)] overflow-hidden rounded-2xl bg-white shadow-xl md:h-[calc(100vh-24px)] md:min-h-0 md:grid-cols-[58%_42%]">
         {/* LEFT BRANDING PANEL */}
         <section
           className="relative flex min-h-[430px] flex-col justify-between overflow-hidden bg-cover bg-center p-8 text-white md:min-h-full md:p-12"
@@ -205,25 +205,25 @@ export default function LoginPage({ onLogin, onAttendance, loading }) {
         </section>
 
         {/* RIGHT LOGIN PANEL */}
-        <section className="flex items-center justify-center bg-[#f8faf9] px-5 py-10 md:px-8 lg:px-12">
-          <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white p-7 shadow-lg md:p-9">
-            <div className="mb-7 text-center">
+        <section className="flex items-center justify-center bg-[#f8faf9] px-5 py-10 md:px-8 md:py-4 lg:px-12">
+          <div className="w-full max-w-md rounded-3xl border border-gray-100 bg-white px-7 py-8 shadow-lg md:px-5 md:py-[clamp(1.5rem,calc(22vh_-_7rem),5rem)]">
+            <div className="mb-7 text-center md:mb-3">
               <p className="text-sm font-bold uppercase tracking-widest text-green-800">
                 Welcome to IMPIG
               </p>
 
-              <h2 className="mt-3 text-3xl font-extrabold text-[#123c2b] md:text-4xl">
+              <h2 className="mt-2 text-3xl font-extrabold text-[#123c2b] md:mt-3 md:text-4xl">
                 Welcome Back!
               </h2>
 
-              <p className="mt-3 text-base text-gray-500">
+              <p className="mt-2 text-base text-gray-500 md:mt-3">
                 Workflow Management System
               </p>
             </div>
 
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={submit} className="space-y-3">
               <input
-                className="w-full rounded-xl border border-gray-200 bg-white px-5 py-4 text-gray-800 shadow-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-700/20"
+                className="w-full rounded-xl border border-gray-200 bg-white px-5 py-4 text-gray-800 shadow-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-700/20 md:py-3"
                 value={employeeId}
                 onChange={(e) => {
                   setEmployeeId(e.target.value);
@@ -237,7 +237,7 @@ export default function LoginPage({ onLogin, onAttendance, loading }) {
               <div className="relative">
                 <input
                   type={show ? "text" : "password"}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-5 py-4 pr-20 text-gray-800 shadow-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-700/20"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-5 py-4 pr-20 text-gray-800 shadow-sm outline-none transition focus:border-green-700 focus:ring-2 focus:ring-green-700/20 md:py-3"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -268,7 +268,7 @@ export default function LoginPage({ onLogin, onAttendance, loading }) {
 
               <button
                 type="submit"
-                className="w-full rounded-full bg-[#006333] px-5 py-4 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#004d28]"
+                className="w-full rounded-full bg-[#006333] px-5 py-4 font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#004d28] md:py-3"
               >
                 Sign In
               </button>
@@ -277,22 +277,22 @@ export default function LoginPage({ onLogin, onAttendance, loading }) {
             <button
               type="button"
               onClick={() => onAttendance?.()}
-              className="mt-3 w-full rounded-full border-2 border-[#ff9800] bg-[#ffa500] px-5 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#f39200]"
+              className="mt-3 w-full rounded-full border-2 border-[#ff9800] bg-[#ffa500] px-5 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#f39200] md:py-2.5"
             >
               Attendance
             </button>
 
-            <div className="mt-7 rounded-xl border border-green-100 bg-[#f0fbf4] p-4 text-center">
+            <div className="mt-7 rounded-xl border border-green-100 bg-[#f0fbf4] p-4 text-center md:mt-3 md:p-3">
               <p className="text-sm font-bold text-green-900">
                 Regular employees
               </p>
-              <p className="mt-2 text-sm leading-6 text-gray-600">
+              <p className="mt-2 text-sm leading-6 text-gray-600 md:mt-3 md:leading-5">
                 Regular staff don't need an account. Tap Attendance to time in
                 and out with your ID.
               </p>
             </div>
 
-            <div className="mt-7 text-center">
+            <div className="mt-7 text-center md:mt-3">
               <p className="text-xs text-gray-400">
                 IMPIG Construction Supply
                 <span className="mx-2 text-orange-500">•</span>

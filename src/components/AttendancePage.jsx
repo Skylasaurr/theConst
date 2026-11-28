@@ -14,6 +14,10 @@ export default function AttendancePage({ data, notify, onBack }) {
   const inputRef = useRef(null);
   const scannerRef = useRef(null);
   const processingRef = useRef(false);
+  const lastScannedIdRef = useRef(null);
+  const noQrFramesRef = useRef(0);
+  const attendanceRef = useRef(attendance);
+  attendanceRef.current = attendance;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -53,7 +57,7 @@ export default function AttendancePage({ data, notify, onBack }) {
       return;
     }
 
-    const record = attendance[employee.id];
+    const record = attendanceRef.current[employee.id];
 
     if (!record?.timeIn) {
       clockIn(employee.id);
@@ -82,6 +86,8 @@ export default function AttendancePage({ data, notify, onBack }) {
     try {
       setCameraStarting(true);
       processingRef.current = false;
+      lastScannedIdRef.current = null;
+      noQrFramesRef.current = 0;
 
       permissionStream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -124,23 +130,31 @@ export default function AttendancePage({ data, notify, onBack }) {
           },
           aspectRatio: 1,
         },
-        async (decodedText) => {
+        (decodedText) => {
+          noQrFramesRef.current = 0;
+
           if (processingRef.current) return;
 
+          const scannedId = decodedText.trim().toLowerCase();
+          if (scannedId === lastScannedIdRef.current) return;
+
           processingRef.current = true;
-          processAttendance(decodedText);
-
+          lastScannedIdRef.current = scannedId;
           try {
-            if (scanner.isScanning) {
-              await scanner.stop();
-            }
-          } catch (error) {
-            console.log("Scanner stop:", error);
+            processAttendance(decodedText);
+          } finally {
+            processingRef.current = false;
           }
-
-          setScanning(false);
         },
-        () => {}
+        () => {
+          if (!lastScannedIdRef.current) return;
+
+          noQrFramesRef.current += 1;
+          if (noQrFramesRef.current >= 20) {
+            lastScannedIdRef.current = null;
+            noQrFramesRef.current = 0;
+          }
+        },
       );
 
       setScanning(true);
@@ -166,6 +180,8 @@ export default function AttendancePage({ data, notify, onBack }) {
   const stopScanner = async () => {
     const scanner = scannerRef.current;
     processingRef.current = true;
+    lastScannedIdRef.current = null;
+    noQrFramesRef.current = 0;
 
     if (scanner?.isScanning) {
       try {
