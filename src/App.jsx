@@ -12,6 +12,7 @@ import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
 import Reports from "./components/Reports";
+import SalesReport from "./components/SalesReport";
 import RequestsPage from "./components/RequestsPage";
 import useAdminData from "./hooks/useAdminData";
 import { fullName } from "./lib/format";
@@ -20,6 +21,7 @@ import { NAV, ROLES, DEMO_USER, users } from "./data/system";
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const [attendanceMode, setAttendanceMode] = useState(false);
   const [role, setRole] = useState("owner");
@@ -47,6 +49,11 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setInitialLoading(false), 5500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -110,6 +117,7 @@ export default function App() {
   if (!loggedIn) {
     return (
       <LoginPage
+        loading={initialLoading}
         onAttendance={() => {
           setToast("");
           setAttendanceMode(true);
@@ -204,6 +212,8 @@ export default function App() {
             />
           ) : page === "rep" && role === "owner" ? (
             <Reports data={data} notify={setToast} />
+          ) : page === "rep" && role === "cashier" ? (
+            <SalesReport notify={setToast} cashierName={user.name} />
           ) : page === "req" && role === "owner" ? (
             <RequestsPage data={data} onDecide={decide} />
           ) : (
