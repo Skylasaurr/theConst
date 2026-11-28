@@ -112,9 +112,6 @@ export default function Dashboard({ role, user, data, onDecide, onPage }) {
       </Panel>
       <Panel title="Today">
         <p className="mt-0 mb-3 text-muted">You have not timed in yet today.</p>
-        <Button variant="primary" onClick={() => onPage("dtr")}>
-          Open my DTR
-        </Button>
       </Panel>
     </div>
   );

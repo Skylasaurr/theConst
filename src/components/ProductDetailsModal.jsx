@@ -8,6 +8,7 @@ export default function ProductDetailsModal({
   onClose,
   onEdit,
   onAddStock,
+  onSendRequest,
   readOnly = false,
 }) {
   const rows = product && [
@@ -51,6 +52,11 @@ export default function ProductDetailsModal({
             {!readOnly && (
               <Button variant="primary" onClick={() => onEdit(product)}>
                 Edit Product
+              </Button>
+            )}
+            {readOnly && (
+              <Button variant="primary" onClick={() => onSendRequest(product)}>
+                Send Request
               </Button>
             )}
           </div>
