@@ -11,6 +11,7 @@ import IWSEmployees from "./components/IWSEmployees";
 import WeeklyDtr from "./components/WeeklyDTR";
 import Expenses from "./components/Expenses";
 import Inventory from "./components/Inventory";
+import InventoryReport from "./components/InventoryReport";
 import Reports from "./components/Reports";
 import SalesReport from "./components/SalesReport";
 import RequestsPage from "./components/RequestsPage";
@@ -214,6 +215,12 @@ export default function App() {
             <Reports data={data} notify={setToast} />
           ) : page === "rep" && role === "cashier" ? (
             <SalesReport notify={setToast} cashierName={user.name} />
+          ) : page === "rep" && role === "inventory" ? (
+            <InventoryReport
+              data={data}
+              notify={setToast}
+              preparedBy={user.name}
+            />
           ) : page === "req" && role === "owner" ? (
             <RequestsPage data={data} onDecide={decide} />
           ) : (

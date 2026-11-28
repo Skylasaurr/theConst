@@ -41,7 +41,7 @@ export default function AttendancePage({ data, notify, onBack }) {
     };
   }, []);
 
-  const processAttendance = (value) => {
+  const processAttendance = (value, focusInput = true) => {
     const id = value.trim().toLowerCase();
 
     if (!id) return;
@@ -53,7 +53,7 @@ export default function AttendancePage({ data, notify, onBack }) {
     if (!employee) {
       notify("Employee ID not found. Please try again.");
       setEmployeeId("");
-      inputRef.current?.focus();
+      if (focusInput) inputRef.current?.focus();
       return;
     }
 
@@ -70,7 +70,7 @@ export default function AttendancePage({ data, notify, onBack }) {
     }
 
     setEmployeeId("");
-    inputRef.current?.focus();
+    if (focusInput) inputRef.current?.focus();
   };
 
   const submitAttendance = (e) => {
@@ -141,7 +141,7 @@ export default function AttendancePage({ data, notify, onBack }) {
           processingRef.current = true;
           lastScannedIdRef.current = scannedId;
           try {
-            processAttendance(decodedText);
+            processAttendance(decodedText, false);
           } finally {
             processingRef.current = false;
           }

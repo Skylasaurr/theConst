@@ -16,6 +16,7 @@ const RANGES = [
   ["7", "7 days"],
   ["30", "30 days"],
 ];
+const PAGE_SIZE = 20;
 const PRINT_CSS = `@media print {
   #main-nav, header, .hazard, .no-print { display: none !important; }
   main { grid-column: 1 / -1 !important; max-width: none !important; }
@@ -36,6 +37,8 @@ export default function SalesReport({ notify, cashierName }) {
   const [range, setRange] = useState("7");
   const [query, setQuery] = useState("");
   const [receipt, setReceipt] = useState(null);
+  const [page, setPage] = useState(1);
+  const [dailyPage, setDailyPage] = useState(1);
   const days = Number(range);
 
   const sales = useMemo(
@@ -93,6 +96,17 @@ export default function SalesReport({ notify, cashierName }) {
       .map(([date, r]) => [shortDate(date), r.count, peso(r.amount)]);
   }, [sales]);
 
+  const dailyPages = Math.max(1, Math.ceil(dailyTotals.length / PAGE_SIZE));
+  const dailyCurrent = Math.min(dailyPage, dailyPages);
+  const dailyRows = dailyTotals.slice(
+    (dailyCurrent - 1) * PAGE_SIZE,
+    dailyCurrent * PAGE_SIZE,
+  );
+  const dailyRangeStart = dailyTotals.length
+    ? (dailyCurrent - 1) * PAGE_SIZE + 1
+    : 0;
+  const dailyRangeEnd = Math.min(dailyCurrent * PAGE_SIZE, dailyTotals.length);
+
   const q = query.trim().toLowerCase();
   const shown = q
     ? sales.filter(
@@ -101,6 +115,111 @@ export default function SalesReport({ notify, cashierName }) {
           s.items.some((i) => i.name.toLowerCase().includes(q)),
       )
     : sales;
+
+  const pages = Math.max(1, Math.ceil(shown.length / PAGE_SIZE));
+  const current = Math.min(page, pages);
+  const pageRows = shown.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const rangeStart = shown.length ? (current - 1) * PAGE_SIZE + 1 : 0;
+  const rangeEnd = Math.min(current * PAGE_SIZE, shown.length);
+
+  const renderSalesRows = (rows, showViewButton) =>
+    rows.map((s) => (
+      <tr key={s.id} className="border-b border-line even:bg-soft">
+        <td className="px-2 py-2 whitespace-nowrap text-muted">{s.id}</td>
+        <td className="px-2 py-2 whitespace-nowrap">{shortDate(s.date)}</td>
+        <td className="px-2 py-2">
+          <span className="block max-w-[260px] truncate">
+            {s.items.map((i) => i.name).join(", ")}
+          </span>
+        </td>
+        <td className="px-2 py-2 whitespace-nowrap text-right">
+          {itemCount(s)}
+        </td>
+        <td className="px-2 py-2 whitespace-nowrap text-right">
+          {peso(s.total)}
+        </td>
+        {showViewButton && (
+          <td className="no-print px-2 py-2 text-right">
+            <Button
+              small
+              onClick={() => setReceipt(s)}
+              aria-label={`View sale ${s.id}`}
+            >
+              <Icon name="eye" /> View
+            </Button>
+          </td>
+        )}
+      </tr>
+    ));
+
+  const renderSalesTable = (rows, showViewButton, className) => {
+    const columns = ["Sale ID", "Date", "Items", "Qty", "Total"];
+
+    return (
+      <table
+        className={`w-full min-w-[640px] border-collapse text-left text-sm ${className}`}
+      >
+        <thead>
+          <tr>
+            {[...columns, ...(showViewButton ? [""] : [])].map((column, index) => (
+              <th
+                key={`${column}-${index}`}
+                className={`sticky top-0 z-10 border-b border-line bg-surface px-2 py-2 text-[13px] font-semibold text-muted print:static ${
+                  [3, 4].includes(index) ? "text-right" : ""
+                } ${showViewButton && index === 5 ? "no-print" : ""}`}
+              >
+                {column}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length ? (
+            renderSalesRows(rows, showViewButton)
+          ) : (
+            <tr>
+              <td
+                colSpan={columns.length + (showViewButton ? 1 : 0)}
+                className="px-2 py-4 text-center text-muted"
+              >
+                No sales match.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    );
+  };
+
+  const renderDailyTotalsTable = (rows, className) => (
+    <table
+      className={`w-full min-w-[420px] border-collapse text-left text-sm ${className}`}
+    >
+      <thead>
+        <tr>
+          {["Date", "Transactions", "Total"].map((column, index) => (
+            <th
+              key={column}
+              className={`sticky top-0 z-10 border-b border-line bg-surface px-2 py-2 text-[13px] font-semibold text-muted print:static ${
+                index > 0 ? "text-right" : ""
+              }`}
+            >
+              {column}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(([date, count, amount]) => (
+          <tr key={date} className="border-b border-line even:bg-soft">
+            <td className="px-2 py-2 whitespace-nowrap text-muted">{date}</td>
+            <td className="px-2 py-2 whitespace-nowrap text-right">{count}</td>
+            <td className="px-2 py-2 whitespace-nowrap text-right">{amount}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 
   const exportCsv = () => {
     const rows = [
@@ -133,7 +252,11 @@ export default function SalesReport({ notify, cashierName }) {
               key={v}
               aria-pressed={range === v}
               variant={range === v ? "primary" : "default"}
-              onClick={() => setRange(v)}
+              onClick={() => {
+                setRange(v);
+                setPage(1);
+                setDailyPage(1);
+              }}
             >
               {l}
             </Button>
@@ -172,11 +295,44 @@ export default function SalesReport({ notify, cashierName }) {
       {days > 1 && (
         <Panel title="Daily totals">
           {dailyTotals.length ? (
-            <DataTable
-              head={["Date", "Transactions", "Total"]}
-              rows={dailyTotals}
-              right={[1, 2]}
-            />
+            <>
+              <div className="max-h-[480px] overflow-auto print:max-h-none print:overflow-visible">
+                {renderDailyTotalsTable(dailyRows, "print:hidden")}
+                {renderDailyTotalsTable(dailyTotals, "hidden print:table")}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                <p className="m-0 text-xs text-muted">
+                  <span className="print:hidden">
+                    Showing {dailyRangeStart}-{dailyRangeEnd} of{" "}
+                    {dailyTotals.length} dates
+                  </span>
+                  <span className="hidden print:inline">
+                    Showing 1-{dailyTotals.length} of {dailyTotals.length} dates
+                  </span>
+                </p>
+                {dailyPages > 1 && (
+                  <div className="no-print flex items-center gap-2 text-sm">
+                    <Button
+                      small
+                      onClick={() => setDailyPage(dailyCurrent - 1)}
+                      disabled={dailyCurrent <= 1}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-muted">
+                      Page {dailyCurrent} of {dailyPages}
+                    </span>
+                    <Button
+                      small
+                      onClick={() => setDailyPage(dailyCurrent + 1)}
+                      disabled={dailyCurrent >= dailyPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
             <p className="m-0 text-muted">No sales in this period.</p>
           )}
@@ -188,37 +344,50 @@ export default function SalesReport({ notify, cashierName }) {
           <input
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder="Search sale ID or product"
             aria-label="Search sales"
             className="w-full max-w-sm rounded border border-line bg-surface px-3 py-2"
           />
         </div>
-        {shown.length ? (
-          <DataTable
-            head={["Sale ID", "Date", "Items", "Qty", "Total", ""]}
-            right={[3, 4]}
-            rows={shown.map((s) => [
-              s.id,
-              shortDate(s.date),
-              <span key="i" className="block max-w-[260px] truncate">
-                {s.items.map((i) => i.name).join(", ")}
-              </span>,
-              itemCount(s),
-              peso(s.total),
+        <div className="max-h-[480px] overflow-auto print:max-h-none print:overflow-visible">
+          {renderSalesTable(pageRows, true, "print:hidden")}
+          {renderSalesTable(shown, false, "hidden print:table")}
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <p className="m-0 text-xs text-muted">
+            <span className="print:hidden">
+              Showing {rangeStart}-{rangeEnd} of {shown.length} sales
+            </span>
+            <span className="hidden print:inline">
+              Showing {shown.length ? 1 : 0}-{shown.length} of {shown.length} sales
+            </span>
+          </p>
+          {pages > 1 && (
+            <div className="no-print flex items-center gap-2 text-sm">
               <Button
-                key="v"
                 small
-                className="no-print"
-                onClick={() => setReceipt(s)}
+                onClick={() => setPage(current - 1)}
+                disabled={current <= 1}
               >
-                <Icon name="eye" /> View
-              </Button>,
-            ])}
-          />
-        ) : (
-          <p className="m-0 text-muted">No sales match.</p>
-        )}
+                Previous
+              </Button>
+              <span className="text-muted">
+                Page {current} of {pages}
+              </span>
+              <Button
+                small
+                onClick={() => setPage(current + 1)}
+                disabled={current >= pages}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </div>
       </Panel>
 
       <Modal
