@@ -16,7 +16,6 @@ import useAdminData from "./hooks/useAdminData";
 import { fullName } from "./lib/format";
 import { NAV, ROLES, DEMO_USER, users } from "./data/system";
 
-
 export default function App() {
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -71,8 +70,15 @@ export default function App() {
     data.decideRequest(req.id, status);
     setToast(`Request ${status}`);
   };
-  const roster = data.employees.map((e) => ({ id: e.id, no: e.no, name: fullName(e), pos: e.pos }));
-  const pendingCount = data.requests.filter((r) => r.status === "pending").length;
+  const roster = data.employees.map((e) => ({
+    id: e.id,
+    no: e.no,
+    name: fullName(e),
+    pos: e.pos,
+  }));
+  const pendingCount = data.requests.filter(
+    (r) => r.status === "pending",
+  ).length;
 
   if (!loggedIn) {
     return (
@@ -110,7 +116,7 @@ export default function App() {
           topOffset={headerHeight}
         />
 
-       <main className="w-full max-w-none min-w-0 p-4 md:p-[22px] lg:col-start-2">
+        <main className="w-full max-w-none min-w-0 p-4 md:p-[22px] lg:col-start-2">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h1 className="m-0 font-display text-[28px] leading-[1.1] font-bold md:text-[32px]">
               {title}
@@ -142,9 +148,17 @@ export default function App() {
           ) : page === "exp" ? (
             <Expenses data={data} notify={setToast} />
           ) : page === "dtr" ? (
-            <IWSEmployees data={data} notify={setToast} currentUserId={user.id} />
+            <IWSEmployees
+              data={data}
+              notify={setToast}
+              currentUserId={user.id}
+            />
           ) : page === "inv" ? (
-            <Inventory data={data} notify={setToast} />
+            <Inventory
+              data={data}
+              notify={setToast}
+              readOnly={role === "cashier"}
+            />
           ) : page === "att" ? (
             <WeeklyDtr
               employee={roster[0]}

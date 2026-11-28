@@ -3,7 +3,13 @@ import Button from "./Button";
 import StockBadge from "./StockBadge";
 import { peso } from "../lib/format";
 
-export default function ProductDetailsModal({ product, onClose, onEdit, onAddStock }) {
+export default function ProductDetailsModal({
+  product,
+  onClose,
+  onEdit,
+  onAddStock,
+  readOnly = false,
+}) {
   const rows = product && [
     ["Product ID", product.sku],
     ["Category", product.cat],
@@ -14,12 +20,20 @@ export default function ProductDetailsModal({ product, onClose, onEdit, onAddSto
     ["Stock value", peso(product.price * Math.max(0, product.stock))],
   ];
   return (
-    <Modal open={!!product} title={product?.name ?? ""} subtitle="Product details" onClose={onClose}>
+    <Modal
+      open={!!product}
+      title={product?.name ?? ""}
+      subtitle="Product details"
+      onClose={onClose}
+    >
       {product && (
         <>
           <ul className="m-0 list-none p-0">
             {rows.map(([k, v]) => (
-              <li key={k} className="flex justify-between gap-3 border-b border-line py-2">
+              <li
+                key={k}
+                className="flex justify-between gap-3 border-b border-line py-2"
+              >
                 <span className="text-muted">{k}</span>
                 <b className="text-right">{v}</b>
               </li>
@@ -31,8 +45,14 @@ export default function ProductDetailsModal({ product, onClose, onEdit, onAddSto
           </ul>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
             <Button onClick={onClose}>Close</Button>
-            <Button onClick={() => onAddStock(product)}>Add Stock</Button>
-            <Button variant="primary" onClick={() => onEdit(product)}>Edit Product</Button>
+            {!readOnly && (
+              <Button onClick={() => onAddStock(product)}>Add Stock</Button>
+            )}
+            {!readOnly && (
+              <Button variant="primary" onClick={() => onEdit(product)}>
+                Edit Product
+              </Button>
+            )}
           </div>
         </>
       )}
