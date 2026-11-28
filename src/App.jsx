@@ -16,6 +16,7 @@ import Reports from "./components/Reports";
 import SalesReport from "./components/SalesReport";
 import RequestsPage from "./components/RequestsPage";
 import useAdminData from "./hooks/useAdminData";
+import MyRequests from './components/MyRequests'
 import { fullName } from "./lib/format";
 import { NAV, ROLES, DEMO_USER, users } from "./data/system";
 
@@ -223,6 +224,8 @@ export default function App() {
             />
           ) : page === "req" && role === "owner" ? (
             <RequestsPage data={data} onDecide={decide} />
+          ) : page === "req" && role === "cashier" ? (
+            <MyRequests requests={data.requests} user={user} notify={setToast} onCreate={data.addRequest} />
           ) : (
             <Panel title={title}>
               <p className="m-0 text-muted">
