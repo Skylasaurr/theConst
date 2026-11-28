@@ -223,6 +223,21 @@ export default function useAdminData() {
   const deleteTransaction = (id) =>
     setTransactions((rows) => rows.filter((r) => r.id !== id));
 
+  const submitTransactionRequest = (transaction, by) =>
+    setRequests((rows) => [
+      {
+        id: `Q-${nextNumber(rows.map((r) => r.id), /^Q-(\d+)$/)}`,
+        by,
+        text: `${transaction.type} transaction: ${transaction.category} (${transaction.date})`,
+        reason: "Submitted for admin review",
+        type: "transaction",
+        payload: transaction,
+        status: "pending",
+        decidedAt: null,
+      },
+      ...rows,
+    ]);
+
   /* ---------- Employees and time clock ---------- */
   const addEmployee = (e) => {
     const no = `E-${String(
@@ -288,6 +303,10 @@ export default function useAdminData() {
           [employeeId]: { timeIn, timeOut },
         }));
       }
+
+      if (req.type === "transaction") {
+        addTransaction(req.payload);
+      }
     }
 
     setRequests((rows) =>
@@ -312,6 +331,7 @@ export default function useAdminData() {
     products, addProduct, updateProduct, deleteProduct, addStock, importProducts,
     categories, addCategory, renameCategory, deleteCategory,
     transactions, addTransaction, updateTransaction, deleteTransaction,
+    submitTransactionRequest,
     employees, addEmployee, updateEmployee, deleteEmployee,
     attendance, clockIn, clockOut,
     requests, decideRequest,

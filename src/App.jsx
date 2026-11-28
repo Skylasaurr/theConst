@@ -1,4 +1,3 @@
-
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import TopBar from "./components/TopBar";
 import Sidebar from "./components/Sidebar";
@@ -179,7 +178,12 @@ export default function App() {
               onPage={setPage}
             />
           ) : page === "exp" ? (
-            <Expenses data={data} notify={setToast} />
+            <Expenses
+              data={data}
+              notify={setToast}
+              role={role}
+              submittedBy={user.name}
+            />
           ) : page === "dtr" ? (
             <IWSEmployees
               data={data}
@@ -217,9 +221,7 @@ export default function App() {
         title="Log out?"
         onClose={() => setConfirmLogout(false)}
       >
-        <p className="m-0 mb-4 text-muted">
-          Are you sure you want to log out?
-        </p>
+        <p className="m-0 mb-4 text-muted">Are you sure you want to log out?</p>
         <div className="flex justify-end gap-2">
           <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
           <Button variant="warning" onClick={logout}>

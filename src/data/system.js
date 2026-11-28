@@ -24,7 +24,8 @@ export const PASSWORD = 'Impig_123'
 /* ---------- Admin sample data (frontend state only, no database) ---------- */
 
 /* type "stock": payload.stock becomes the new quantity of payload.productId.
-   type "dtr": payload sets the employee's time in / out for today. */
+   type "dtr": payload sets the employee's time in / out for today.
+   type "transaction": payload is added to cash flow when approved. */
 export const initialRequests = [
   { id: 'Q-1', by: 'Darren Jake Payoran', text: 'Stock count adjustment: PPR PIPE 1 32mm to 152', reason: 'Physical count is higher than the system', type: 'stock', payload: { productId: 'p3', stock: 152 }, status: 'pending', decidedAt: null },
   { id: 'Q-2', by: 'Christine Joy San Pablo', text: 'DTR correction: 07:40 to 17:05', reason: 'Forgot to time in', type: 'dtr', payload: { employeeId: 'u5', timeIn: '7:40 AM', timeOut: '5:05 PM' }, status: 'pending', decidedAt: null },

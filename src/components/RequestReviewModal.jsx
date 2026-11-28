@@ -1,6 +1,7 @@
 import Modal from "./Modal";
 import Button from "./Button";
 import StatusBadge from "./StatusBadge";
+import { peso } from "../lib/format";
 
 export const STATUS_VARIANT = { pending: "late", approved: "present", rejected: "absent" };
 export const STATUS_LABEL = { pending: "Pending", approved: "Approved", rejected: "Rejected" };
@@ -29,6 +30,15 @@ export default function RequestReviewModal({ request, products, onClose, onDecid
             <p className="m-0 mb-2 text-sm">
               Approving sets today's time in to <b>{request.payload.timeIn}</b> and time out to <b>{request.payload.timeOut}</b>.
             </p>
+          )}
+          {request.type === "transaction" && (
+            <div className="mb-4 space-y-1 text-sm">
+              <p className="m-0">Date: <b>{request.payload.date}</b></p>
+              <p className="m-0">Type: <b>{request.payload.type}</b></p>
+              <p className="m-0">Category: <b>{request.payload.category}</b></p>
+              <p className="m-0">Amount: <b>{peso(request.payload.amount)}</b></p>
+              <p className="m-0">Note: <b>{request.payload.note || "-"}</b></p>
+            </div>
           )}
           <p className="m-0 mb-4 text-sm">
             Status: <StatusBadge variant={STATUS_VARIANT[request.status]}>{STATUS_LABEL[request.status]}</StatusBadge>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
@@ -21,9 +20,7 @@ const CATEGORIES = [
 const card = "rounded-lg border border-line bg-surface p-4";
 
 const sum = (rows, type) =>
-  rows
-    .filter((t) => t.type === type)
-    .reduce((s, t) => s + t.amount, 0);
+  rows.filter((t) => t.type === type).reduce((s, t) => s + t.amount, 0);
 
 // Custom Date Picker
 function DatePicker({ value, onChange }) {
@@ -114,16 +111,14 @@ function DatePicker({ value, onChange }) {
           </div>
 
           <div className="grid grid-cols-7 border-l border-t border-[#d1d5db] text-center">
-            {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map(
-              (day) => (
-                <div
-                  key={day}
-                  className="flex h-8 items-center justify-center border-b border-r border-[#d1d5db] bg-[#f3f4f6] text-xs font-bold"
-                >
-                  {day}
-                </div>
-              ),
-            )}
+            {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
+              <div
+                key={day}
+                className="flex h-8 items-center justify-center border-b border-r border-[#d1d5db] bg-[#f3f4f6] text-xs font-bold"
+              >
+                {day}
+              </div>
+            ))}
 
             {Array.from({ length: firstDay }, (_, i) => (
               <div
@@ -184,8 +179,7 @@ function TransactionForm({ initial, submitLabel, onSubmit, onCancel }) {
 
   const [errors, setErrors] = useState({});
 
-  const set = (key) => (e) =>
-    setF({ ...f, [key]: e.target.value });
+  const set = (key) => (e) => setF({ ...f, [key]: e.target.value });
 
   const submit = (e) => {
     e.preventDefault();
@@ -228,11 +222,7 @@ function TransactionForm({ initial, submitLabel, onSubmit, onCancel }) {
       </Field>
 
       <Field label="Type">
-        <select
-          className={inputClass}
-          value={f.type}
-          onChange={set("type")}
-        >
+        <select className={inputClass} value={f.type} onChange={set("type")}>
           <option>Cash in</option>
           <option>Cash out</option>
         </select>
@@ -279,11 +269,7 @@ function TransactionForm({ initial, submitLabel, onSubmit, onCancel }) {
           </Button>
         )}
 
-        <Button
-          type="submit"
-          variant="green"
-          className="flex-1 py-2.5"
-        >
+        <Button type="submit" variant="green" className="flex-1 py-2.5">
           {submitLabel}
         </Button>
       </div>
@@ -292,7 +278,7 @@ function TransactionForm({ initial, submitLabel, onSubmit, onCancel }) {
 }
 
 // Expenses and Cash Flow Page
-export default function Expenses({ data, notify }) {
+export default function Expenses({ data, notify, role, submittedBy }) {
   const { transactions } = data;
 
   const [dialog, setDialog] = useState(null);
@@ -317,22 +303,13 @@ export default function Expenses({ data, notify }) {
     };
   });
 
-  const maxBar = Math.max(
-    1,
-    ...last7.map((d) => Math.max(d.in, d.out)),
-  );
+  const maxBar = Math.max(1, ...last7.map((d) => Math.max(d.in, d.out)));
 
   const stats = [
     ["Cash in today", peso(sum(todays, "Cash in"))],
     ["Cash out today", peso(sum(todays, "Cash out"))],
-    [
-      "Net today",
-      peso(sum(todays, "Cash in") - sum(todays, "Cash out")),
-    ],
-    [
-      "Net, last 7 days",
-      peso(last7.reduce((s, d) => s + d.in - d.out, 0)),
-    ],
+    ["Net today", peso(sum(todays, "Cash in") - sum(todays, "Cash out"))],
+    ["Net, last 7 days", peso(last7.reduce((s, d) => s + d.in - d.out, 0))],
   ];
 
   const rows = [...transactions]
@@ -347,6 +324,12 @@ export default function Expenses({ data, notify }) {
     );
 
   const add = (values) => {
+    if (role === "cashier") {
+      data.submitTransactionRequest(values, submittedBy);
+      notify("Transaction submitted for admin review");
+      return;
+    }
+
     data.addTransaction(values);
     notify(`${values.type} of ${peso(values.amount)} recorded`);
   };
@@ -428,7 +411,9 @@ export default function Expenses({ data, notify }) {
           </h2>
 
           <TransactionForm
-            submitLabel="Record transaction"
+            submitLabel={
+              role === "cashier" ? "Submit transaction" : "Record transaction"
+            }
             onSubmit={add}
           />
         </section>
@@ -476,13 +461,18 @@ export default function Expenses({ data, notify }) {
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="sticky top-0 bg-surface">
               <tr className="border-b border-line text-muted">
-                {["Date", "Category", "Note", "Type", "Amount", "Action"].map(
-                  (h) => (
-                    <th key={h} className="p-3">
-                      {h}
-                    </th>
-                  ),
-                )}
+                {[
+                  "Date",
+                  "Category",
+                  "Note",
+                  "Type",
+                  "Amount",
+                  ...(role === "cashier" ? [] : ["Action"]),
+                ].map((h) => (
+                  <th key={h} className="p-3">
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -506,34 +496,39 @@ export default function Expenses({ data, notify }) {
                     {peso(t.amount)}
                   </td>
 
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <Button
-                        small
-                        onClick={() => setDialog({ type: "edit", item: t })}
-                        aria-label={`Edit ${t.category} ${t.date}`}
-                      >
-                        <Icon name="edit" className="h-3.5 w-3.5" />
-                        Edit
-                      </Button>
+                  {role !== "cashier" && (
+                    <td className="p-3">
+                      <div className="flex gap-2">
+                        <Button
+                          small
+                          onClick={() => setDialog({ type: "edit", item: t })}
+                          aria-label={`Edit ${t.category} ${t.date}`}
+                        >
+                          <Icon name="edit" className="h-3.5 w-3.5" />
+                          Edit
+                        </Button>
 
-                      <Button
-                        small
-                        variant="warning"
-                        onClick={() => setDialog({ type: "delete", item: t })}
-                        aria-label={`Delete ${t.category} ${t.date}`}
-                      >
-                        <Icon name="trash" className="h-3.5 w-3.5" />
-                        Delete
-                      </Button>
-                    </div>
-                  </td>
+                        <Button
+                          small
+                          variant="warning"
+                          onClick={() => setDialog({ type: "delete", item: t })}
+                          aria-label={`Delete ${t.category} ${t.date}`}
+                        >
+                          <Icon name="trash" className="h-3.5 w-3.5" />
+                          Delete
+                        </Button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
 
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="p-4 text-center text-muted">
+                  <td
+                    colSpan={role === "cashier" ? 5 : 6}
+                    className="p-4 text-center text-muted"
+                  >
                     {transactions.length === 0
                       ? "No transactions recorded."
                       : "No transactions match your filters."}
