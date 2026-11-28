@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import Panel from "./Panel";
 import Button from "./Button";
-import Modal from "./Modal";
+import NewRequestModal from "./NewRequestModal";
 
 const SHOW_DEMO = true;
 
@@ -18,23 +19,18 @@ const TABS = [
   ["all", "All"],
 ];
 
-const TYPES = {
-  "Stock count adjustment": "Item and new count, e.g. PPR PIPE 1 32mm to 152",
-  "Void sale": "Receipt number, e.g. Receipt 0042",
-  "DTR correction": "Corrected time, e.g. 07:40 to 17:05",
-  Other: "What do you need?",
-};
-
 const stamp = (d) => {
   const date = d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+
   const time = d.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
   });
+
   return `${date} · ${time}`;
 };
 
@@ -72,16 +68,21 @@ const statusKey = (r) => {
 
 const th = "py-2 pr-4 font-semibold";
 const td = "py-3 pr-4 align-top";
-const label = "block text-sm font-semibold";
 const field = "rounded border border-line bg-surface px-3 py-2 text-ink";
 
-export default function MyRequests({ requests = [], user, onCreate, notify }) {
+export default function MyRequests({
+  requests = [],
+  user,
+  onCreate,
+  notify,
+}) {
   const [tab, setTab] = useState("all");
   const [query, setQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [created, setCreated] = useState([]);
 
   const name = user?.name;
+
   const mine = [
     ...created,
     ...requests.filter((r) => name && r.by === name),
@@ -94,14 +95,17 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
       : mine.filter((r) => statusKey(r) === key).length;
 
   const q = query.trim().toLowerCase();
+
   const shown = mine.filter((r) => {
     const inTab = tab === "all" || statusKey(r) === tab;
     const words = `${r.id} ${r.text} ${r.reason} ${STATUS[statusKey(r)][0]}`;
+
     return inTab && (!q || words.toLowerCase().includes(q));
   });
 
   const send = (draft) => {
     const now = new Date();
+
     const req = {
       id: `N-${now.getTime().toString(36).slice(-4).toUpperCase()}`,
       by: name,
@@ -110,11 +114,17 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
       status: "pending",
       time: now.getTime(),
     };
-    if (onCreate) onCreate(req);
-    else setCreated((list) => [req, ...list]);
+
+    if (onCreate) {
+      onCreate(req);
+    } else {
+      setCreated((list) => [req, ...list]);
+    }
+
     setFormOpen(false);
     setTab("all");
     setQuery("");
+
     notify?.("Request sent to the owner");
   };
 
@@ -124,6 +134,7 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
         Requests you sent to the owner. Count adjustments, voids and DTR
         corrections appear here.
       </p>
+
       <Panel>
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <div className="flex flex-wrap gap-2">
@@ -139,6 +150,7 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
               </Button>
             ))}
           </div>
+
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <input
               type="search"
@@ -148,6 +160,7 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
               aria-label="Search requests"
               className={`${field} w-56`}
             />
+
             <Button variant="primary" onClick={() => setFormOpen(true)}>
               New request
             </Button>
@@ -164,9 +177,11 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
                 <th className={th}>Status</th>
               </tr>
             </thead>
+
             <tbody>
               {shown.map((r) => {
                 const [statusLabel, tone] = STATUS[statusKey(r)];
+
                 return (
                   <tr
                     key={r.id}
@@ -176,10 +191,13 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
                       <span className="text-muted">{r.id} · </span>
                       {r.text}
                     </td>
+
                     <td className={td}>{r.reason}</td>
+
                     <td className={`${td} whitespace-nowrap`}>
                       {r.time ? stamp(new Date(r.time)) : (r.sent ?? "-")}
                     </td>
+
                     <td className={td}>
                       <span
                         className={`inline-block rounded-[3px] border border-current bg-current/10 px-2 text-xs font-semibold ${tone}`}
@@ -190,6 +208,7 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
                   </tr>
                 );
               })}
+
               {shown.length === 0 && (
                 <tr>
                   <td colSpan={4} className="py-3.5 text-muted">
@@ -204,81 +223,11 @@ export default function MyRequests({ requests = [], user, onCreate, notify }) {
         </div>
       </Panel>
 
-      <Modal
+      <NewRequestModal
         open={formOpen}
-        title="New request"
         onClose={() => setFormOpen(false)}
-      >
-        <RequestForm onCancel={() => setFormOpen(false)} onSubmit={send} />
-      </Modal>
+        onSubmit={send}
+      />
     </>
-  );
-}
-
-function RequestForm({ onCancel, onSubmit }) {
-  const [type, setType] = useState("Stock count adjustment");
-  const [details, setDetails] = useState("");
-  const [reason, setReason] = useState("");
-  const ready = Boolean(details.trim() && reason.trim());
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (ready)
-      onSubmit({ type, details: details.trim(), reason: reason.trim() });
-  };
-
-  return (
-    <form onSubmit={submit}>
-      <label htmlFor="req-type" className={label}>
-        Request type
-      </label>
-      <select
-        id="req-type"
-        value={type}
-        onChange={(e) => setType(e.target.value)}
-        className={`${field} mt-1 w-full`}
-      >
-        {Object.keys(TYPES).map((t) => (
-          <option key={t}>{t}</option>
-        ))}
-      </select>
-
-      <label htmlFor="req-details" className={`${label} mt-3`}>
-        Details
-      </label>
-      <input
-        id="req-details"
-        value={details}
-        onChange={(e) => setDetails(e.target.value)}
-        placeholder={TYPES[type]}
-        className={`${field} mt-1 w-full`}
-      />
-
-      <label htmlFor="req-reason" className={`${label} mt-3`}>
-        Reason
-      </label>
-      <textarea
-        id="req-reason"
-        rows={3}
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        placeholder="Why is this needed?"
-        className={`${field} mt-1 w-full`}
-      />
-
-      <div className="mt-5 flex justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={!ready}
-          className="disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Send request
-        </Button>
-      </div>
-    </form>
   );
 }
